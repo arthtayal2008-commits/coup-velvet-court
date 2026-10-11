@@ -17,10 +17,6 @@
    "destination": "/api/api/dm"
   },
   {
-   "source": "/api/waitlist",
-   "destination": "/api/api/waitlist"
-  },
-  {
    "source": "/privacy",
    "destination": "/privacy.html"
   },

@@ -585,12 +585,11 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 .vc-signed{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:14px;background:#121010;border:1px solid #3f8a6455}
 .vc-signed span{flex:1;display:grid}.vc-signed small{color:var(--vc-green);font-size:11px}
 .vc-ranked{color:#ffd25a;font-size:12px;text-shadow:0 0 6px #ffb30088;cursor:default}
-/* ── landing: leaderboard + tournament ── */
-.vc-more{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;max-width:1100px;margin:10px auto 0}
+/* ── landing: leaderboard ── */
+.vc-more{display:grid;grid-template-columns:minmax(0,640px);justify-content:center;gap:18px;margin:10px auto 0}
 .vc-panel{padding:20px;border-radius:22px;background:linear-gradient(180deg,#242121,#191717);border:1px solid var(--vc-line2);box-shadow:0 18px 40px #0008}
 .vc-panel-h{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-size:16px}
 .vc-panel-h .vc-i{color:#ff8a8f;font-size:20px}.vc-panel-h small{margin-left:auto;color:var(--vc-mute);font-size:11px}
-.vc-pill{margin-left:auto;padding:3px 10px;border-radius:999px;background:var(--vc-gold);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;animation:vc-breathe 2.4s ease-in-out infinite}
 .vc-lb{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .vc-lb li{display:grid;grid-template-columns:30px 22px 1fr auto 64px;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;background:#121010;border:1px solid var(--vc-line)}
 .vc-lb li.is-me{border-color:var(--vc-gold);box-shadow:0 0 0 1px #c8323a55 inset}
@@ -600,8 +599,6 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 .vc-lb-pts{font:18px/1 Court,Georgia,serif;color:#f2ece4}
 .vc-lb-empty{display:flex;align-items:center;gap:10px;padding:18px;color:var(--vc-mute);font-size:13px;border:1px dashed var(--vc-line2);border-radius:14px}
 .vc-sub{color:var(--vc-mute);font-size:13px;margin:0 0 12px}
-.vc-wl{display:grid;gap:10px}
-.vc-wl-done{display:flex;align-items:center;gap:10px;padding:16px;border-radius:14px;background:#163628;border:1px solid #3f8a64;color:#d6ffe8;animation:vc-pop-in .5s var(--spring)}
 .vc-foot{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:28px 0 8px;color:var(--vc-mute);font-size:12px}
 .vc-foot a{color:var(--vc-mute)}.vc-foot a:hover,.vc-foot .vc-linkbtn:hover{color:#fff}.vc-foot .vc-linkbtn{color:var(--vc-mute);font-size:12px;padding:0}
 @media(max-width:860px){.vc-more{grid-template-columns:1fr}.vc-lb li{grid-template-columns:28px 22px 1fr auto}.vc-lb small{display:none}}
