@@ -5,3 +5,8 @@ node_modules/
 
 .vercel
 .env*
+
+# local agent/tool files
+.agents/
+.claude/
+skills-lock.json
