@@ -113,8 +113,11 @@ function status(p){const ph=state.phase;
  if(ph?.eligible?.includes(p.id))return ['hourglass','is-wait','Deciding'];
  return null;}
 function statusBadge(p){const s=status(p);return s?`<span class="vc-status ${s[1]}" title="${s[2]}" aria-label="${s[2]}">${ico(s[0])}</span>`:'';}
-function nameEl(p){const can=seat.id===state.host&&p.id!==seat.id&&!p.removed;return can?`<button class="vc-nm" data-player-menu="${p.id}" aria-expanded="${openPlayer===p.id}">${esc(p.name)}</button>`:`<b class="vc-nm">${esc(p.name)}</b>`;}
-function removeBtn(p){return seat.id===state.host&&p.id!==seat.id&&!p.removed&&openPlayer===p.id?`<button class="vc-remove" data-remove="${p.id}" aria-label="Remove ${esc(p.name)}">${ico('x')}Remove</button>`:'';}
+function nameEl(p){const can=p.id!==seat.id&&!p.removed&&!me()?.removed&&!me()?.spectator;return can?`<button class="vc-nm" data-player-menu="${p.id}" aria-expanded="${openPlayer===p.id}">${esc(p.name)}</button>`:`<b class="vc-nm">${esc(p.name)}</b>`;}
+function kickInfo(p){const voters=state.players.filter(x=>!x.removed&&!x.spectator&&x.id!==p.id),v=(state.kickVotes?.[p.id]||[]).filter(id=>voters.some(x=>x.id===id));return {v,n:voters.length,mine:v.includes(seat.id),canVote:voters.some(x=>x.id===seat.id)};}
+function removeBtn(p){if(p.id===seat.id||p.removed||openPlayer!==p.id)return '';const k=kickInfo(p);
+ return `<span class="vc-pmenu">${k.canVote?`<button class="vc-kickbtn ${k.mine?'is-on':''}" data-votekick="${p.id}" title="${esc(p.name)} is removed when everyone else votes">${ico('x')}${k.mine?'Cancel kick vote':'Vote to kick'}<b>${k.v.length}/${k.n}</b></button>`:''}${seat.id===state.host?`<button class="vc-remove" data-remove="${p.id}" aria-label="Remove ${esc(p.name)}">${ico('skull')}Remove now</button>`:''}</span>`;}
+function kickBadge(p){const k=kickInfo(p);return k.v.length?`<span class="vc-kickbadge" title="Voted to kick: ${k.v.map(id=>esc(byId(id)?.name||'')).join(', ')}">${ico('x')}Kick ${k.v.length}/${k.n}</span>`:'';}
 function seatClasses(p){const ph=state.phase,a=state.action,cls=[];
  if(state.status==='playing'&&state.players[state.turn]?.id===p.id)cls.push('is-turn');
  if(acting().includes(p.id))cls.push('is-acting');
@@ -129,7 +132,7 @@ function seatClasses(p){const ph=state.phase,a=state.action,cls=[];
 function seatPos(i,n){const ang=(n===1?270:180+180*(i+.5)/n)*Math.PI/180;return {x:(50+45*Math.cos(ang)).toFixed(2),y:(56+44*Math.sin(ang)).toFixed(2)};}
 function seatHTML(p,i,n){const pos=seatPos(i,n),f=fxOf('seat:'+p.id+':spot','seat:'+p.id+':hit','seat:'+p.id+':elim','seat:'+p.id+':target','seat:'+p.id+':aura'),pf=fxOf('purse:'+p.id),df=fxOf('dealt:'+p.id);
  return `<div class="vc-seat ${seatClasses(p)}${f.cls}" data-seat="${p.id}" data-voice-seat="${p.id}" style="--x:${pos.x};--y:${pos.y};--k:${i};${f.style}">
- ${seatTag(p)}<div class="vc-seat-id">${ava(p)}${nameEl(p)}${p.ranked?'<span class="vc-ranked" title="Ranked · points count">★</span>':''}${statusBadge(p)}</div>
+ ${seatTag(p)}<div class="vc-seat-id">${ava(p)}${nameEl(p)}${kickBadge(p)}${p.ranked?'<span class="vc-ranked" title="Ranked · points count">★</span>':''}${statusBadge(p)}</div>
  <div class="vc-zones">
   <div class="vc-zone vc-cards${df.cls}" style="${df.style}" title="${p.cards.filter(c=>!c.revealed).length} influence">${p.cards.map((c,j)=>card(c,{size:'s',i:j})).join('')}</div>
   <div class="vc-zone vc-purse${pf.cls}" style="${pf.style}" title="${p.coins} coins">${chips(p.coins)}<b>${p.coins}</b></div>
@@ -282,7 +285,7 @@ async function authPost(body){if(account.busy)return;account.busy=true;account.e
 function bindLanding(){document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=openAccount);if(account.googleClientId&&$('#vc-gbtn-home'))googleButton('#vc-gbtn-home');if($('#vc-rules-foot'))$('#vc-rules-foot').onclick=()=>openRules();}
 function lobbyHTML(){const seated=state.players.filter(p=>!p.spectator),specs=state.players.filter(p=>p.spectator),host=seat.id===state.host;
  const pos=[210,270,330,30,90,150].map(a=>{a*=Math.PI/180;return {x:(50+44*Math.cos(a)).toFixed(1),y:(50+40*Math.sin(a)).toFixed(1)};});
- return `<section class="vc-lobby"><div class="vc-lobby-code"><span class="vc-code-label">${ico('users')}</span><b>${state.code}</b><button class="vc-iconbtn" id="copy2" title="Copy invite link" aria-label="Copy invite link">${ico('copy')}</button></div>
+ return `<section class="vc-lobby"><div class="vc-lobby-code"><span class="vc-code-label">${ico('users')}</span><b>${state.code}</b><button class="vc-iconbtn" id="copy2" title="Copy invite link" aria-label="Copy invite link">${ico('copy')}</button><button class="vc-iconbtn vc-leave" data-leave title="Leave the table" aria-label="Leave the table">${ico('logout')}</button></div>
  <div class="vc-lobby-table"><div class="vc-felt"></div>
  ${pos.map((q,i)=>{const p=seated[i];if(!p)return `<div class="vc-lslot is-empty" style="--x:${q.x};--y:${q.y}" title="Open seat"><span>${ico('seat')}</span></div>`;const f=fxOf('slot:'+p.id);return `<div class="vc-lslot${f.cls}" style="--x:${q.x};--y:${q.y};${f.style}" data-voice-seat="${p.id}">${ava(p,'lg')}${p.id===state.host?`<span class="vc-host" title="Host">${ico('crown')}</span>`:''}${nameEl(p)}${p.ranked?'<span class="vc-ranked" title="Ranked · points count">★</span>':''}${p.id===seat.id?'<span class="vc-you" title="You"></span>':''}<span class="vc-slot-tools">${dmBadge(p)}${removeBtn(p)}</span></div>`;}).join('')}
  <div class="vc-lobby-center">${host?`<button class="vc-btn gold big" data-move="start" ${seated.length<2||busy?'disabled':''} title="Start game">${ico('play')}Start</button>`:`<span class="vc-waiting" title="Waiting for the host">${ico('hourglass')}</span>`}<span class="vc-count" title="Players">${ico('users')}${seated.length}/6</span></div></div>
@@ -305,16 +308,16 @@ function gameHTML(){const spectating=!!me().spectator,seated=seatedPlayers(),opp
     <div class="vc-play" id="vc-play">${playHTML()}</div>
     <div class="vc-bank" id="vc-bank" title="Treasury"><span class="vc-pile"><i></i><i></i><i></i><i></i><i></i></span></div>
    </div>
-   <div class="vc-feed" aria-label="This turn">${t?threadChips(t,5):''}</div>
+   
   </div>
-  <div class="vc-corner"><span id="connection" class="vc-conn" title="Connection">Connected</span><span class="vc-round" title="Round">${ico('crown')}${state.round}</span><button class="vc-iconbtn" id="vc-history" aria-expanded="${historyOpen}" title="Table history" aria-label="Table history">${ico('list')}</button></div>
+  <div class="vc-corner"><span id="connection" class="vc-conn" title="Connection">Connected</span><span class="vc-round" title="Round">${ico('crown')}${state.round}</span><button class="vc-iconbtn vc-leave" data-leave title="Leave the table" aria-label="Leave the table">${ico('logout')}</button><button class="vc-iconbtn" id="vc-history" aria-expanded="${historyOpen}" title="Table history" aria-label="Table history">${ico('list')}</button></div>
   ${specs.length?`<div class="vc-specs" title="Spectators · next round queue">${ico('eye')}${specs.map(p=>`<span class="vc-spec">${ava(p,'xs')}${nameEl(p)}${dmBadge(p)}${removeBtn(p)}</span>`).join('')}</div>`:''}
  </div>
  <div class="vc-phasebar" aria-live="polite">${phaseLine()}</div>
  <div class="vc-hud">
   ${spectating?`<section class="vc-mine is-spec"><div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b><span class="vc-status is-wait" title="Spectating">${ico('eye')}</span></div></section>`:
   `<section class="vc-mine ${seatClasses(m)}${mineF.cls}" data-seat="${m.id}" data-voice-seat="${m.id}" style="${mineF.style}">
-   ${seatTag(m)}<div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b>${statusBadge(m)}<div class="own-seat"></div></div>
+   ${seatTag(m)}<div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b>${kickBadge(m)}${statusBadge(m)}<div class="own-seat"></div></div>
    <div class="vc-zones big">
     <div class="vc-zone vc-cards${myDealt.cls}" style="${myDealt.style}">${m.cards.map((c,i)=>card(c,{size:'l',i})).join('')}</div>
     <div class="vc-zone vc-purse big${myPurse.cls}" style="${myPurse.style}" title="${m.coins} coins">${chips(m.coins)}<b>${m.coins}</b></div>
@@ -342,7 +345,13 @@ function updateCountdown(){const e=$('#countdown'),w=$('#vc-timer'),root=documen
  w.title=ph.type==='turn'?'Turn timer · Income on timeout (Coup at 10+ coins)':'Decision timer · automatic response on timeout';}
 setInterval(updateCountdown,250);
 
-function bind(){document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=openAccount);window.CoupVoice?.refresh();updateCountdown();updateSeatDM();
+function confirmBox(title,text,okLabel,onOk){const d=document.createElement('dialog');d.className='remove-dialog vc-confirm';d.innerHTML=`<h2>${title}</h2><p>${text}</p><div class="remove-dialog-buttons"><button class="vc-btn ghost" data-no>${ico('x')}Stay</button><button class="vc-btn danger" data-yes>${okLabel}</button></div>`;document.body.append(d);d.showModal();const close=()=>{d.close();d.remove();};d.querySelector('[data-no]').onclick=close;d.querySelector('[data-yes]').onclick=()=>{close();onOk();};d.oncancel=()=>d.remove();}
+function leaveTable(){const m=me(),inGame=state.status==='playing'&&m&&!m.spectator&&living(m);
+ confirmBox('Leave the table?',inGame?'You will be out of this round and lose your seat. Your coins go back to the bank.':'Your seat will be freed. You can rejoin with the room code.',`${ico('logout')}Leave`,async()=>{busy=true;render();
+  try{for(let i=0;i<3;i++){try{await request({code:seat.code,version,move:{type:'leave'}});break;}catch(e){if(e.status!==409||i===2)throw e;const d=await request();version=d.version;}}
+   window.CoupVoice?.leave?.();localStorage.removeItem('coup-seat-'+seat.code);location.href='/';}
+  catch(e){busy=false;notify(e.message);render();}});}
+function bind(){document.querySelectorAll('[data-leave]').forEach(b=>b.onclick=leaveTable);document.querySelectorAll('[data-votekick]').forEach(b=>b.onclick=()=>{openPlayer=null;send({type:'votekick',target:b.dataset.votekick});});document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=openAccount);window.CoupVoice?.refresh();updateCountdown();updateSeatDM();
  document.querySelectorAll('[data-seat-op]').forEach(b=>b.onclick=()=>send({type:b.dataset.seatOp,target:b.dataset.seatTarget}));
  document.querySelectorAll('[data-player-menu]').forEach(b=>b.onclick=()=>{openPlayer=openPlayer===b.dataset.playerMenu?null:b.dataset.playerMenu;render();});
  document.querySelectorAll('[data-remove]').forEach(b=>b.onclick=()=>{const p=state.players.find(p=>p.id===b.dataset.remove);openPlayer=null;let d=document.createElement('dialog');d.className='remove-dialog vc-confirm';d.innerHTML=`<div class="vc-confirm-id">${ava(p,'lg')}<b>${esc(p.name)}</b></div><p>${state.status==='playing'?'Eliminate this player? An interrupted action is cancelled and its cost returned.':'Free this seat?'}</p><div class="remove-dialog-buttons"><button class="vc-btn ghost" id="cancel-remove">${ico('x')}Cancel</button><button class="vc-btn danger" id="confirm-remove">${ico('skull')}Remove</button></div>`;document.body.append(d);d.showModal();d.querySelector('#cancel-remove').onclick=()=>{d.close();d.remove();};d.querySelector('#confirm-remove').onclick=()=>{d.close();d.remove();send({type:'remove',target:p.id});};d.oncancel=()=>d.remove();});
@@ -356,7 +365,9 @@ function bind(){document.querySelectorAll('[data-open-account]').forEach(b=>b.on
  if($('#vc-handle'))$('#vc-handle').onclick=()=>{sheetUser=!$('#vc-dock').classList.contains('is-open');$('#vc-dock').classList.toggle('is-open',sheetUser);$('#vc-handle').setAttribute('aria-expanded',sheetUser);sheetSize();};
  const toggleHistory=()=>{historyOpen=!historyOpen;render();};if($('#vc-history'))$('#vc-history').onclick=toggleHistory;if($('#vc-history-close'))$('#vc-history-close').onclick=toggleHistory;
  sheetSize();}
-function sheetSize(){const d=$('#vc-dock');document.documentElement.style.setProperty('--vc-sheet',(d&&getComputedStyle(d).position==='fixed'?(d.classList.contains('is-open')?d.offsetHeight:Math.min(d.offsetHeight,92)):0)+'px');}
+function fitScreen(){const t=$('.top'),v=$('.voice-bar');document.documentElement.style.setProperty('--vc-top',((t?.offsetHeight||64)+(v&&!v.hidden?v.offsetHeight:0))+'px');}
+addEventListener('resize',fitScreen);
+function sheetSize(){fitScreen();const d=$('#vc-dock');document.documentElement.style.setProperty('--vc-sheet',(d&&getComputedStyle(d).position==='fixed'?(d.classList.contains('is-open')?d.offsetHeight:Math.min(d.offsetHeight,92)):0)+'px');}
 addEventListener('resize',sheetSize);
 
 /* ── choreography: compare the previous and next state, then schedule motion on an overlay ── */
@@ -447,7 +458,7 @@ function absorb(d){const prev=state,next=d.state;let fresh=[];
  state=next;version=d.version;render();
  if(prev&&!animated)soundFor(fresh);
  if(nextRound&&!next.players.find(p=>p.id===seat?.id)?.ready){notify('Next round · tap Ready');[440,660].forEach((f,i)=>tone(f,.3,'sine',.2,i*.2));}
- if(prev&&newPrivate.length)notify('Time ran out · auto move');}
+ if(prev&&newPrivate.length)notify('Time ran out · auto move');{const before=(prev?.kickVotes?.[seat?.id]||[]).length,now=(next.kickVotes?.[seat?.id]||[]),voters=next.players.filter(x=>!x.removed&&!x.spectator&&x.id!==seat?.id).length;if(prev&&now.length>before)notify(`${pname(now.at(-1))} voted to kick you (${now.length}/${voters})`);}}
 async function sync(){if(!seat||polling||busy)return;polling=true;try{const d=await request();if(version!==d.version||!state){targetAction=null;selected.clear();absorb(d);}if($('#connection'))$('#connection').textContent='Connected';$('#connection')?.classList.remove('is-off');}catch(e){if(e.status===401){state=null;seat=null;$('#app').innerHTML=`<section class="vc-gone">${ico('skull','vc-gone-i')}<h1>Seat closed</h1><a class="vc-btn gold big" href="/">${ico('home')}Home</a></section>`;return;}if($('#connection')){$('#connection').textContent='Reconnecting…';$('#connection').classList.add('is-off');}}finally{polling=false;}}
 /* Moves race when several players answer the same window. On a version conflict, refresh;
    if the same decision is still waiting for this player, resend instead of asking them to click again. */
