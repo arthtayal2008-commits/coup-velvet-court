@@ -358,10 +358,13 @@ function absorb(d){const prev=state,next=d.state;let fresh=[];
  let animated=false;if(prev){state=next;animated=choreograph(prev,next,fresh);}
  state=next;version=d.version;render();
  if(prev&&!animated)soundFor(fresh);
- if(nextRound){notify('Next round · tap Ready');[440,660].forEach((f,i)=>tone(f,.3,'sine',.2,i*.2));}
+ if(nextRound&&!next.players.find(p=>p.id===seat?.id)?.ready){notify('Next round · tap Ready');[440,660].forEach((f,i)=>tone(f,.3,'sine',.2,i*.2));}
  if(prev&&newPrivate.length)notify('Time ran out · auto move');}
 async function sync(){if(!seat||polling||busy)return;polling=true;try{const d=await request();if(version!==d.version||!state){targetAction=null;selected.clear();absorb(d);}if($('#connection'))$('#connection').textContent='Connected';$('#connection')?.classList.remove('is-off');}catch(e){if(e.status===401){state=null;seat=null;$('#app').innerHTML=`<section class="vc-gone">${ico('skull','vc-gone-i')}<h1>Seat closed</h1><a class="vc-btn gold big" href="/">${ico('home')}Home</a></section>`;return;}if($('#connection')){$('#connection').textContent='Reconnecting…';$('#connection').classList.add('is-off');}}finally{polling=false;}}
-async function send(move){if(busy)return;busy=true;render();try{const d=await request({code:seat.code,version,move});if(d.voiceWarning)notify(d.voiceWarning);targetAction=null;selected.clear();busy=false;absorb(d);}catch(e){notify(e.message);busy=false;await sync();}finally{busy=false;render();}}
+/* Moves race when several players answer the same window. On a version conflict, refresh;
+   if the same decision is still waiting for this player, resend instead of asking them to click again. */
+function decisionKey(s){if(!s)return '';const ph=s.phase,mine=ph?.eligible?ph.eligible.includes(seat.id)&&!ph.passed.includes(seat.id):ph?.player===seat.id;return [s.status,s.round,s.turn,s.turnNumber,ph?.type,ph?.player||'',mine,!!s.readyCheck].join('|');}
+async function send(move){if(busy)return;busy=true;render();const key=decisionKey(state);try{let d=null;for(let attempt=0;attempt<4;attempt++){try{d=await request({code:seat.code,version,move});break;}catch(e){if(e.status!==409)throw e;const fresh=await request();absorb(fresh);if(decisionKey(state)!==key)return;}}if(!d)throw new Error('The table is busy. Try again.');if(d.voiceWarning)notify(d.voiceWarning);targetAction=null;selected.clear();busy=false;absorb(d);}catch(e){notify(e.message);busy=false;await sync();}finally{busy=false;render();}}
 
 $('#rules-open').innerHTML=ico('q');$('#rules-open').setAttribute('aria-label','How to play');$('#rules-open').title='How to play';
 $('#rules-open').onclick=()=>$('#rules').showModal();$('#rules-close').onclick=()=>$('#rules').close();$('#rule-actions').innerHTML=Object.entries(defs).map(([k,d])=>`<div class="rule-row"><b>${d[0]} <span>${d[1]}</span></b><p>${d[3]}</p></div>`).join('');audioControl();render();if(seat)sync();setInterval(()=>{if(!document.hidden)sync();},2000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});

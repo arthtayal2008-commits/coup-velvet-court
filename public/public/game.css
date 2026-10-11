@@ -153,7 +153,7 @@ button.vc-card:focus-visible{outline:2px solid var(--vc-gold);outline-offset:4px
 /* ── game stage ── */
 .vc-game{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 .vc-stage,.vc-hud,.vc-mine,.vc-dock{min-width:0}
-.vc-stage{position:relative;height:clamp(470px,60vh,600px);isolation:isolate}
+.vc-stage{position:relative;height:clamp(400px,calc(100vh - 430px),600px);isolation:isolate}
 .vc-felt{position:absolute;inset:16% 10% 4%;z-index:-1;border-radius:50%;background:radial-gradient(ellipse at 50% 35%,#594b49 0%,#403634 40%,#2a2322 75%,#1e1919 100%);box-shadow:inset 0 0 0 2px #d3454c66,inset 0 0 0 11px #231d1c,inset 0 0 0 12.5px #d3454c44,inset 0 30px 90px #000a,0 40px 90px #000b,0 0 0 1px #000}
 .vc-felt::before{content:'';position:absolute;inset:8%;border-radius:50%;background:repeating-radial-gradient(circle at 50% 50%,transparent 0 22px,#ffffff05 22px 23px);mask:radial-gradient(ellipse,#000 30%,transparent 72%)}
 .vc-felt::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(ellipse at 50% 0%,#d3454c14,transparent 60%)}
@@ -481,6 +481,7 @@ dialog[open]{animation:vc-dialog .45s var(--spring)}
  .vc-resp .vc-btn{flex:1}
  .vc-drawer{width:100vw}
 }
+@media(max-width:760px){.dm-toggle{display:grid;place-items:center;width:52px;height:52px;padding:0;border-radius:50%;font-size:0;position:relative}.dm-toggle::before{content:"\2709";font-size:22px;line-height:1}.dm-toggle .dm-badge{position:absolute;top:-4px;right:-4px;font-size:11px}.dm-widget{right:12px}}
 @media(max-width:480px){.audio-control input{display:none}body .top{flex-wrap:nowrap}}
 @media(max-width:380px){.vc-acts{grid-template-columns:repeat(3,minmax(0,1fr))}.vc-l{--w:92px}}
 
