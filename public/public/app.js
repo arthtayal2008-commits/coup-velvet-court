@@ -252,7 +252,7 @@ function googleButton(sel='#vc-gbtn'){const draw=()=>{const el=$(sel);if(!el||!w
 async function authPost(body){if(account.busy)return;account.busy=true;account.error='';renderAccount();try{const r=await fetch('/api/auth',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)}),d=await r.json();if(!r.ok)throw new Error(d.error||'Something went wrong.');account.profile=d.profile;
  if(body.type==='logout')notify('Logged out.');else if(body.type==='nickname')notify('Nickname saved.');else notify(state?'Signed in · your seat now earns points':'Signed in · points will count');
  if(body.type!=='nickname'&&body.type!=='logout'&&$('#vc-account')?.open&&!state)$('#vc-account').close();}catch(e){account.error=e.message;}finally{account.busy=false;}await loadAccount();renderAccount();}
-function bindLanding(){document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=openAccount);if(account.googleClientId&&$('#vc-gbtn-home'))googleButton('#vc-gbtn-home');if($('#vc-rules-foot'))$('#vc-rules-foot').onclick=()=>$('#rules').showModal();}
+function bindLanding(){document.querySelectorAll('[data-open-account]').forEach(b=>b.onclick=openAccount);if(account.googleClientId&&$('#vc-gbtn-home'))googleButton('#vc-gbtn-home');if($('#vc-rules-foot'))$('#vc-rules-foot').onclick=()=>openRules();}
 function lobbyHTML(){const seated=state.players.filter(p=>!p.spectator),specs=state.players.filter(p=>p.spectator),host=seat.id===state.host;
  const pos=[210,270,330,30,90,150].map(a=>{a*=Math.PI/180;return {x:(50+44*Math.cos(a)).toFixed(1),y:(50+40*Math.sin(a)).toFixed(1)};});
  return `<section class="vc-lobby"><div class="vc-lobby-code"><span class="vc-code-label">${ico('users')}</span><b>${state.code}</b><button class="vc-iconbtn" id="copy2" title="Copy invite link" aria-label="Copy invite link">${ico('copy')}</button></div>
@@ -425,7 +425,55 @@ async function sync(){if(!seat||polling||busy)return;polling=true;try{const d=aw
 function decisionKey(s){if(!s)return '';const ph=s.phase,mine=ph?.eligible?ph.eligible.includes(seat.id)&&!ph.passed.includes(seat.id):ph?.player===seat.id;return [s.status,s.round,s.turn,s.turnNumber,ph?.type,ph?.player||'',mine,!!s.readyCheck].join('|');}
 async function send(move){if(busy)return;busy=true;render();const key=decisionKey(state);try{let d=null;for(let attempt=0;attempt<4;attempt++){try{d=await request({code:seat.code,version,move});break;}catch(e){if(e.status!==409)throw e;const fresh=await request();absorb(fresh);if(decisionKey(state)!==key)return;}}if(!d)throw new Error('The table is busy. Try again.');if(d.voiceWarning)notify(d.voiceWarning);targetAction=null;selected.clear();busy=false;absorb(d);}catch(e){notify(e.message);busy=false;await sync();}finally{busy=false;render();}}
 
+
+/* ── How to play: a six-step visual guide built from the game's own cards and icons ── */
+let rulesStep=0;
+const RULE_STEPS=[['crown','Goal'],['play','Your turn'],['users','Characters'],['swords','Bluff'],['shield','Blocking'],['hourglass','Online']];
+const rCard=(role,size='m')=>card({id:'rule-'+role,role,revealed:false},{size});
+const rBack=(size='m')=>`<div class="vc-card vc-${size} is-back"><div class="vc-flip"><div class="vc-front"></div><div class="vc-back"><span>${ico('crown')}</span></div></div></div>`;
+const rCoins=n=>`<span class="vr-coins">${'<i class="vc-coinchip"></i>'.repeat(n)}</span>`;
+function rulesPanel(i){
+ if(i===0)return `<h2>Be the last one standing</h2>
+ <div class="vr-hero"><div class="vr-hand">${rBack()}${rBack()}</div><span class="vr-eq">+</span>${rCoins(2)}</div>
+ <ul class="vr-points">
+  <li><b>${ico('crown')}</b><span>Everyone gets <strong>2 secret cards</strong> and <strong>2 coins</strong>. Your cards are your lives.</span></li>
+  <li><b>${ico('skull')}</b><span>Lose a fight → turn <strong>one card face-up</strong>. Both face-up → <strong>you're out</strong>.</span></li>
+  <li><b>${ico('trophy')}</b><span>The <strong>last player with a hidden card wins</strong>.</span></li>
+  <li><b>${ico('users')}</b><span>Only 2 players? Whoever starts gets just 1 coin.</span></li></ul>`;
+ if(i===1)return `<h2>On your turn, do one thing</h2><p class="vr-lead">Some actions need a character. You can say you have it even if you don't. That's the bluff.</p>
+ <div class="vr-acts">${Object.entries(ACTS).map(([k,a])=>{const blk=BLOCKERS[k]||[];return `<div class="vr-act ${a.role?'role-'+a.role.toLowerCase():'act-'+k}"><span class="vr-act-i">${ico(a.i)}</span><b>${a.label}</b><span class="vr-act-fx">${({income:'Take 1 coin',aid:'Take 2 coins',tax:'Take 3 coins',exchange:'Swap cards with the deck',steal:'Take 2 coins from a player',assassinate:'Pay 3 · a player loses a card',coup:'Pay 7 · a player loses a card'})[k]}</span><span class="vr-tag">${a.role?`${roleSig(a.role)}Say you're ${a.role}`:`${ico('check')}Anyone can`}</span><span class="vr-tag is-block">${k==='coup'?`${ico('x')}Can't be stopped`:k==='income'?`${ico('x')}Can't be stopped`:blk.length?`${ico('shield')}Blocked by ${blk.map(r=>roleSig(r)).join('')}`:`${ico('swords')}Can be challenged`}</span></div>`;}).join('')}</div>
+ <div class="vr-note is-hot">${ico('bolt')}<span>Got <strong>10 or more coins</strong>? You <strong>must Coup</strong>.</span></div>`;
+ if(i===2)return `<h2>The five characters</h2><p class="vr-lead">There are 3 copies of each in the deck. Claim any of them, whether you hold it or not.</p>
+ <div class="vr-roles">${[['Duke','Take 3 coins','Foreign aid'],['Assassin','Pay 3, a player loses a card',null],['Captain','Steal 2 coins','Stealing'],['Ambassador','Swap cards with the deck','Stealing'],['Contessa',null,'Assassination']].map(([r,does,blocks])=>`<div class="vr-role role-${r.toLowerCase()}">${rCard(r)}<div><b>${r}</b>${does?`<span>${ico('play')}${does}</span>`:''}${blocks?`<span class="is-block">${ico('shield')}Blocks ${blocks}</span>`:''}</div></div>`).join('')}</div>`;
+ if(i===3)return `<h2>Call the bluff</h2><p class="vr-lead">When someone claims a character, <strong>anyone</strong> can challenge them.</p>
+ <div class="vr-flow"><div class="vr-step">${rCard('Duke','s')}<span>"I'm the Duke, I take 3"</span></div><span class="vr-arrow">${ico('arrow')}</span><div class="vr-step is-hot">${ico('swords','vr-big')}<span>"Liar!" Challenge</span></div></div>
+ <div class="vr-outcomes"><div class="vr-out is-ok"><b>${ico('check')}They really had it</b><span>They show the card, shuffle it back and draw a new one.</span><span><strong>The challenger loses a card.</strong> The action happens.</span></div>
+ <div class="vr-out is-bad"><b>${ico('x')}They were bluffing</b><span><strong>The liar loses a card.</strong></span><span>The action is cancelled and any coins paid come back.</span></div></div>
+ <div class="vr-note">${ico('swords')}<span>Only challenge when you're fairly sure. Getting it wrong costs <strong>you</strong> a card.</span></div>`;
+ if(i===4)return `<h2>Stop them with a block</h2><p class="vr-lead">A block is also a claim, so it can be challenged too.</p>
+ <div class="vr-blocks">${[['aid','Duke','Anyone can block']].concat([['steal','Captain','Only the target'],['steal','Ambassador','Only the target'],['assassinate','Contessa','Only the target']]).map(([k,r,who])=>`<div class="vr-block"><span class="vr-act-i">${ico(ACTS[k].i)}</span><b>${ACTS[k].label}</b><span class="vr-arrow">${ico('shield')}</span>${rCard(r,'s')}<span class="vr-who">${r}<small>${who}</small></span></div>`).join('')}</div>
+ <div class="vr-note">${ico('dagger')}<span>A blocked assassination <strong>still costs the 3 coins</strong>. A Coup can't be blocked.</span></div>
+ <div class="vr-note is-hot">${ico('skull')}<span>Watch out: you can lose <strong>both cards</strong> in one turn if you wrongly challenge an Assassin, or fake a Contessa and get caught.</span></div>`;
+ return `<h2>Playing online</h2><p class="vr-lead">Timers keep the game moving. If time runs out, the game picks for you.</p>
+ <div class="vr-timers"><div>${ico('crown')}<b>45s</b><span>Your turn</span><small>Too slow → Income (or a random Coup at 10+ coins)</small></div><div>${ico('swords')}<b>20s</b><span>Challenge / block / reveal</span><small>Too slow → you accept, auto-prove if you can, or lose a random card</small></div><div>${ico('swap')}<b>30s</b><span>Exchange</span><small>Too slow → you keep your cards</small></div></div>
+ <ul class="vr-points">
+  <li><b>${ico('swords')}</b><span>The <strong>first</strong> challenge or block counts. Be quick.</span></li>
+  <li><b>${ico('copy')}</b><span>Share the room code or invite link. Refreshing keeps your seat; rooms close after 24 hours without a move.</span></li>
+  <li><b>${ico('trophy')}</b><span>Sign in to earn points: 10 for each player who finishes below you, +20 for the win.</span></li></ul>
+ <p class="vr-small">Base Coup rules, no Reformation. <a href="https://www.buffalolib.org/sites/default/files/gaming-unplugged/inst/Coup%20Instructions.pdf" target="_blank" rel="noopener">Printed rulebook</a> · Fan-made, original art.</p>`;}
+function renderRules(){const d=$('#rules');if(!d)return;const i=rulesStep,last=RULE_STEPS.length-1;
+ d.classList.add('vc-rules');
+ d.innerHTML=`<header class="vr-head"><span class="vc-eyebrow">${ico('q')}How to play</span><button class="vc-iconbtn" id="vr-close" aria-label="Close">${ico('x')}</button></header>
+ <nav class="vr-tabs" role="tablist">${RULE_STEPS.map(([icon,l],k)=>`<button role="tab" aria-selected="${k===i}" data-rule-step="${k}" class="${k<i?'is-done':''}"><span>${k+1}</span>${l}</button>`).join('')}</nav>
+ <section class="vr-panel" role="tabpanel" aria-live="polite">${rulesPanel(i)}</section>
+ <footer class="vr-foot"><button class="vc-btn ghost" id="vr-prev" ${i?'':'disabled'}>${ico('arrow','vr-back')}Back</button><span class="vr-dots">${RULE_STEPS.map((_,k)=>`<i class="${k===i?'is-on':''}"></i>`).join('')}</span>${i<last?`<button class="vc-btn gold" id="vr-next">Next${ico('arrow')}</button>`:`<button class="vc-btn gold" id="vr-done">${ico('check')}Let's play</button>`}</footer>`;
+ const go=k=>{rulesStep=Math.max(0,Math.min(last,k));renderRules();d.querySelector('.vr-panel')?.scrollIntoView({block:'nearest'});};
+ d.querySelector('#vr-close').onclick=()=>d.close();d.querySelector('#vr-done')?.addEventListener('click',()=>{d.close();rulesStep=0;});
+ d.querySelector('#vr-prev').onclick=()=>go(i-1);d.querySelector('#vr-next')?.addEventListener('click',()=>go(i+1));
+ d.querySelectorAll('[data-rule-step]').forEach(b=>b.onclick=()=>go(+b.dataset.ruleStep));
+ d.onkeydown=e=>{if(e.key==='ArrowRight')go(i+1);if(e.key==='ArrowLeft')go(i-1);};}
+function openRules(){const d=$('#rules');renderRules();if(!d.open)d.showModal();if(!d.dataset.bound){d.dataset.bound='1';d.addEventListener('click',e=>{if(e.target===d)d.close();});}}
 $('#rules-open').innerHTML=ico('q');$('#rules-open').setAttribute('aria-label','How to play');$('#rules-open').title='How to play';
-$('#rules-open').onclick=()=>$('#rules').showModal();$('#rules-close').onclick=()=>$('#rules').close();$('#rule-actions').innerHTML=Object.entries(defs).map(([k,d])=>`<div class="rule-row"><b>${d[0]} <span>${d[1]}</span></b><p>${d[3]}</p></div>`).join('');audioControl();loadAccount();render();if(seat)sync();setInterval(()=>{if(!document.hidden)sync();},2000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});
+$('#rules-open').onclick=()=>openRules();$('#rules-close').onclick=()=>$('#rules').close();$('#rule-actions').innerHTML=Object.entries(defs).map(([k,d])=>`<div class="rule-row"><b>${d[0]} <span>${d[1]}</span></b><p>${d[3]}</p></div>`).join('');audioControl();loadAccount();render();if(seat)sync();setInterval(()=>{if(!document.hidden)sync();},2000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync();});
 
 window.addEventListener("coup-voice-duck",e=>{window.coupVoiceDucked=e.detail;if(audioGain)audioGain.gain.setTargetAtTime(audioMuted?0:audioVolume*3*(e.detail?0.2:1),audioCtx.currentTime,.15);});

@@ -656,3 +656,104 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 .vc-signin-row{display:grid;gap:10px;justify-items:center;margin-top:4px}
 .vc-signin-row .vc-or{width:100%;font-size:11px;color:var(--vc-mute)}
 .vc-signin-row .vc-gbtn{width:100%}
+
+/* ── How to play guide ── */
+dialog.vc-rules{width:min(780px,calc(100vw - 20px));max-height:min(92dvh,860px);padding:0;display:flex;flex-direction:column;overflow:hidden}
+dialog.vc-rules:not([open]){display:none}
+.vr-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 6px}
+.vr-tabs{display:flex;gap:6px;padding:6px 20px 12px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--vc-line)}
+.vr-tabs::-webkit-scrollbar{display:none}
+.vr-tabs button{flex:none;display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 12px 0 5px;border-radius:999px;background:#ffffff08;border:1px solid var(--vc-line2);color:var(--vc-mute);font-size:13px;font-weight:600;cursor:pointer;transition:all .3s var(--spring)}
+.vr-tabs button span{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#2a2626;color:var(--vc-ink);font-size:12px}
+.vr-tabs button.is-done span{background:#2c4a3a;color:#bff5d6}
+.vr-tabs button[aria-selected=true]{background:var(--vc-gold);border-color:#e0484f;color:#fff}
+.vr-tabs button[aria-selected=true] span{background:#fff;color:#9c2128}
+.vr-panel{flex:1;overflow:auto;padding:18px 22px 10px;animation:vr-in .45s var(--spring)}
+@keyframes vr-in{from{opacity:0;transform:translateX(16px)}}
+.vr-panel h2{font-size:clamp(26px,4vw,34px);margin:0 0 8px}
+.vr-lead{color:#d9d2c8;font-size:15px;margin:0 0 16px;line-height:1.5}
+.vr-panel strong{color:#fff}
+.vr-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 20px 16px;border-top:1px solid var(--vc-line)}
+.vr-back{transform:rotate(180deg)}
+.vr-dots{display:flex;gap:6px}.vr-dots i{width:7px;height:7px;border-radius:50%;background:var(--vc-line2);transition:all .3s}.vr-dots i.is-on{width:22px;border-radius:9px;background:var(--vc-gold)}
+/* step 1 */
+.vr-hero{display:flex;align-items:center;justify-content:center;gap:18px;padding:18px;margin:6px 0 14px;border-radius:20px;background:radial-gradient(ellipse at 50% 40%,#ffffff10,transparent 60%),repeating-linear-gradient(93deg,#6b4128 0 38px,#5a3420 38px 70px,#734a2f 70px 96px);box-shadow:inset 0 0 0 2px #2a170d,inset 0 0 0 6px #3c2416}
+.vr-hand{display:flex;gap:10px}.vr-hand .vc-card:nth-child(1){transform:rotate(-6deg)}.vr-hand .vc-card:nth-child(2){transform:rotate(5deg)}
+.vr-eq{font:700 30px Court,Georgia,serif;color:#fff}
+.vr-coins{display:flex;gap:6px}.vr-coins .vc-coinchip{width:34px;height:34px}
+.vr-points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.vr-points li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:#121010;border:1px solid var(--vc-line);font-size:15px;line-height:1.45;color:#d9d2c8}
+.vr-points li b{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:#c8323a26;color:#ff8a8f;font-size:18px}
+/* step 2 */
+.vr-acts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.vr-act{position:relative;display:grid;gap:5px;padding:14px;border-radius:16px;background:linear-gradient(180deg,#242121,#171515);border:1px solid color-mix(in srgb,var(--rc,#6b6460) 55%,transparent)}
+.vr-act b{font-size:16px}
+.vr-act-i{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--rc,radial-gradient(circle at 35% 30%,#fff,var(--vc-silver) 50%,var(--vc-silver2)));color:#fff;font-size:19px;box-shadow:0 4px 12px #0008}
+.vr-act.act-income .vr-act-i,.vr-act.act-aid .vr-act-i{color:#2a2828}.vr-act.act-coup .vr-act-i{background:radial-gradient(circle at 35% 30%,#ff9d8f,var(--vc-red) 55%,#7c2224)}
+.vr-act-fx{font-size:14px;color:#f2ece4}
+.vr-tag{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--vc-mute)}
+.vr-tag .vc-rs{width:18px;height:18px;font-size:10px}
+.vr-tag.is-block{color:#ffb3ad}
+.vr-note{display:flex;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:14px;background:#1d1a1a;border:1px dashed var(--vc-line2);color:#d9d2c8;font-size:14px;line-height:1.45}
+.vr-note>.vc-i{flex:none;font-size:20px;color:#ffd25a}
+.vr-note.is-hot{border-color:#9b3a40;background:#2a1517}.vr-note.is-hot>.vc-i{color:#ff8a8f}
+/* step 3 */
+.vr-roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.vr-role{display:flex;align-items:center;gap:12px;padding:10px;border-radius:16px;background:#121010;border:1px solid color-mix(in srgb,var(--rc) 50%,transparent)}
+.vr-role .vc-card{--w:72px}
+.vr-role b{display:block;font:22px/1.1 Court,Georgia,serif;margin-bottom:6px;color:#fff}
+.vr-role span{display:flex;align-items:center;gap:6px;font-size:13px;color:#d9d2c8;margin-top:3px}
+.vr-role span.is-block{color:#ffb3ad}
+/* step 4 */
+.vr-flow{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;padding:16px;border-radius:18px;background:#121010;border:1px solid var(--vc-line);margin-bottom:12px}
+.vr-step{display:flex;align-items:center;gap:10px;font-size:15px;color:#f2ece4}
+.vr-step .vc-card{--w:46px}
+.vr-step.is-hot{color:#ff8a8f;font-weight:700}
+.vr-big{font-size:34px}
+.vr-arrow{display:grid;place-items:center;color:var(--vc-mute);font-size:22px}
+.vr-outcomes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vr-out{display:grid;gap:6px;padding:14px;border-radius:16px;font-size:14px;line-height:1.45;color:#d9d2c8}
+.vr-out b{display:flex;align-items:center;gap:8px;font-size:16px}
+.vr-out.is-ok{background:#163628;border:1px solid #3f8a64}.vr-out.is-ok b{color:#bff5d6}
+.vr-out.is-bad{background:#2a1517;border:1px solid #9b3a40}.vr-out.is-bad b{color:#ffb3ad}
+/* step 5 */
+.vr-blocks{display:grid;gap:10px}
+.vr-block{display:grid;grid-template-columns:38px 1fr auto 40px minmax(110px,auto);align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:#121010;border:1px solid var(--vc-line)}
+.vr-block b{font-size:15px}
+.vr-block .vc-card{--w:38px}
+.vr-who{display:grid;font-weight:700;font-size:14px}.vr-who small{font-weight:400;color:var(--vc-mute);font-size:12px}
+.vr-block .vr-arrow{color:#ff8a8f}
+/* step 6 */
+.vr-timers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.vr-timers div{display:grid;justify-items:center;text-align:center;gap:4px;padding:14px 10px;border-radius:16px;background:#121010;border:1px solid var(--vc-line)}
+.vr-timers .vc-i{font-size:22px;color:#ff8a8f}
+.vr-timers b{font:34px/1 Court,Georgia,serif;color:#fff}
+.vr-timers span{font-size:13px;font-weight:600;color:#f2ece4}
+.vr-timers small{font-size:12px;color:var(--vc-mute);line-height:1.4}
+.vr-small{font-size:12px;color:var(--vc-mute);margin:14px 0 0}.vr-small a{color:#ff8a8f}
+@media(max-width:600px){
+ .vr-panel{padding:14px 14px 8px}.vr-head{padding:12px 14px 4px}.vr-tabs{padding:6px 14px 10px}.vr-foot{padding:10px 14px 14px}
+ .vr-outcomes,.vr-timers{grid-template-columns:1fr}
+ .vr-block{grid-template-columns:34px 1fr 34px;row-gap:6px}.vr-block .vr-arrow{display:none}.vr-block .vr-who{grid-column:2/-1}
+ .vr-hero{gap:10px}.vr-hand .vc-card{--w:64px}
+ .vr-dots{display:none}
+}
+
+/* ── revealed (lost) cards on opponent seats: big enough to read the character ── */
+.vc-seat{width:184px}
+.vc-seat .vc-zones{grid-template-columns:1fr auto;align-items:center}
+.vc-seat .vc-cards{gap:6px;align-items:flex-end}
+.vc-seat .vc-card.vc-s.is-lost{--w:54px}
+.vc-seat .is-lost .vc-front{box-shadow:0 0 0 1.5px var(--rc),0 4px 10px #0009}
+.vc-seat .is-lost .vc-front img{filter:grayscale(.55) brightness(.82) contrast(1.05)}
+.vc-seat .is-lost .vc-front::after{background:linear-gradient(180deg,transparent 45%,#0b0a1ef0 92%)}
+.vc-seat .vc-s.is-lost .vc-sig{top:3px;left:3px;bottom:auto;transform:none;width:17px;height:17px;background:var(--rc)}
+.vc-seat .vc-s.is-lost .vc-cn{display:block;bottom:3px;font:700 8.5px/1 Melange,system-ui,sans-serif;letter-spacing:.2px;text-transform:uppercase;color:#fff}
+.vc-seat .vc-s.is-lost .vc-lostmark{inset:3px 3px auto auto;width:16px;height:16px;border-radius:50%;background:#0b0a1ecc;font-size:11px;display:grid;place-items:center}
+.vc-seat .vc-purse{min-width:40px}
+/* knocked-out players stay readable */
+.vc-seat.is-out{opacity:.82;filter:saturate(.6)}
+@keyframes vc-k-elim{0%{opacity:1;filter:none}100%{opacity:.82;filter:saturate(.6)}}
+@keyframes vc-k-auraloss{0%{filter:none;opacity:1;translate:0 0}25%{filter:saturate(1.6) brightness(1.15);translate:0 -3px}100%{filter:saturate(.6) brightness(.8);opacity:.82;translate:0 0}}
+@media(max-width:1180px){.vc-seat{width:172px}.vc-seat .vc-card.vc-s.is-lost{--w:50px}}
+@media(max-width:760px){.vc-seat{flex:0 0 168px;width:auto}}
