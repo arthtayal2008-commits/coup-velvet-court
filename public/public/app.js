@@ -310,6 +310,7 @@ function gameHTML(){const spectating=!!me().spectator,seated=seatedPlayers(),opp
   <div class="vc-corner"><span id="connection" class="vc-conn" title="Connection">Connected</span><span class="vc-round" title="Round">${ico('crown')}${state.round}</span><button class="vc-iconbtn" id="vc-history" aria-expanded="${historyOpen}" title="Table history" aria-label="Table history">${ico('list')}</button></div>
   ${specs.length?`<div class="vc-specs" title="Spectators · next round queue">${ico('eye')}${specs.map(p=>`<span class="vc-spec">${ava(p,'xs')}${nameEl(p)}${dmBadge(p)}${removeBtn(p)}</span>`).join('')}</div>`:''}
  </div>
+ <div class="vc-phasebar" aria-live="polite">${phaseLine()}</div>
  <div class="vc-hud">
   ${spectating?`<section class="vc-mine is-spec"><div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b><span class="vc-status is-wait" title="Spectating">${ico('eye')}</span></div></section>`:
   `<section class="vc-mine ${seatClasses(m)}${mineF.cls}" data-seat="${m.id}" data-voice-seat="${m.id}" style="${mineF.style}">
