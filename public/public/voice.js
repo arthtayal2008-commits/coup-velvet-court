@@ -78,7 +78,7 @@ window.CoupVoice={update(n,e){Ze={seat:n,state:e},Y&&(!n||!e?.players.some(t=>t.
 window.addEventListener("pagehide",()=>{Y?.localParticipant.audioTrackPublications.forEach(n=>n.track?.stop())});
 // In game the controls live in your own panel, and each opponent seat gets its own mute button.
 function ou(){let n=Ze?.state&&Ze.state.status!=="lobby",e=document.querySelector(".own-seat"),t=Ze?.state?.players.find(r=>r.id===Ze.seat?.id)?.spectator,i=document.querySelector(".seat-voice-controls");
- if(n&&e&&!t){i||(i=document.createElement("div"),i.className="seat-voice-controls",e.append(i));i.innerHTML=vcControls();Ce.hidden=!0;vcBind(i)}else{i?.remove();Ze?.seat&&(Ce.hidden=!1)}
+ if(n&&e&&!t){i||(i=document.createElement("div"),i.className="seat-voice-controls",e.append(i));i.innerHTML=vcControls()+(Pe?`<small role="status">${si(Pe)}</small>`:"");Ce.hidden=!0;vcBind(i)}else{i?.remove();Ze?.seat&&(Ce.hidden=!1)}
  const live=Y?.state===W.Connected,remote=live?[...Y.remoteParticipants.values()]:[];
  document.querySelectorAll("[data-voice-seat]").forEach(r=>{const s=r.dataset.voiceSeat,a=To().find(o=>o.identity===s);r.classList.toggle("voice-speaking",!!Y&&!deaf&&!!a?.isSpeaking&&!zt.has(s));
   let b=r.querySelector(":scope .seat-voice-mute");const inVoice=remote.some(p=>p.identity===s);

@@ -296,7 +296,7 @@ button.vc-nm{cursor:pointer}button.vc-nm:hover{color:var(--vc-gold2)}
 .vc-mine .own-seat .seat-voice-controls{display:flex!important;flex-direction:row!important;flex-wrap:wrap;gap:5px;margin:0!important}
 .vc-mine .seat-voice-controls button{min-height:30px;padding:0 10px;border-radius:999px;background:#ffffff08;border:1px solid var(--vc-line2);color:var(--vc-ink);font-size:11px}
 .vc-mine .seat-voice-controls [data-voice=mic][aria-pressed=true]{background:var(--vc-green);color:#0b1d14}
-.vc-mine .seat-voice-controls small{display:none}
+.vc-mine .seat-voice-controls small{display:block;width:100%;font-size:10px;line-height:1.3;color:var(--vc-mute)}
 .vc-mine.voice-speaking,.vc-seat.voice-speaking{outline:2px solid var(--vc-green);outline-offset:3px}
 .vc-dock{display:grid;align-content:start;gap:12px;overflow:hidden}
 .vc-dock.is-mine::before{content:'';position:absolute;left:0;top:0;height:3px;width:calc(var(--vc-left)*100%);background:linear-gradient(90deg,var(--vc-gold),var(--vc-gold2));box-shadow:0 0 12px var(--vc-gold);transition:width .25s linear}
