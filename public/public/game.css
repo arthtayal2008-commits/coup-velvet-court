@@ -627,3 +627,7 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 .voice-main [data-voice=deafen][aria-pressed=true],.seat-voice-controls [data-voice=deafen][aria-pressed=true]{background:#5b1f2c;border-color:#9b3a40}
 .voice-bar{background:#141111;border-color:var(--vc-line)}
 .voice-person.speaking i{background:var(--vc-green);box-shadow:0 0 8px var(--vc-green)}
+
+/* Google button: match its light document so Chrome does not paint a white backdrop */
+.vc-gbtn,.vc-gbtn iframe{color-scheme:light}
+.vc-gbtn iframe{border-radius:999px}
