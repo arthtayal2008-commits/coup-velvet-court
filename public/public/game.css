@@ -871,3 +871,10 @@ dialog.vc-rules:not([open]){display:none}
  .vc-game>.vc-stage{padding-top:0}
  .vc-corner{position:static;order:-1;align-self:flex-end;margin-bottom:6px}
 }
+
+/* visible options button (vote kick / remove) */
+.vc-menubtn{display:inline-grid;place-items:center;width:28px;height:24px;padding:0;border-radius:999px;background:#211f1f;border:1px solid var(--vc-line2);color:#f2ece4;font-size:14px;cursor:pointer;box-shadow:0 3px 8px #0008;transition:background .2s,border-color .2s,transform .3s var(--spring)}
+.vc-menubtn:hover,.vc-menubtn.is-open{background:#c8323a;border-color:#e0484f;color:#fff;transform:translateY(-1px)}
+.vc-menubtn.has-votes{border-color:#e0484f;color:#ff9da1}
+.vc-nm .vc-caret{margin-left:3px;font-size:10px;color:var(--vc-mute)}
+button.vc-nm:hover .vc-caret{color:#ff9da1}
