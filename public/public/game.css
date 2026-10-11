@@ -92,7 +92,7 @@ button.vc-card:focus-visible{outline:2px solid var(--vc-gold);outline-offset:4px
 .vc-hero{position:relative;height:540px;display:grid;place-items:center}
 .vc-hero-glow{position:absolute;inset:12% 10%;background:radial-gradient(ellipse,#9b878455,transparent 65%);filter:blur(20px);z-index:-1}
 .vc-fan{position:relative;width:100%;height:100%}
-.vc-fan-card{--w:190px;--oy:-46%;--ty:-120px;position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:5/7;border-radius:16px;overflow:hidden;box-shadow:0 0 0 2px var(--rc),0 24px 50px #000c;--a:calc((var(--i) - 2)*13deg);transform:translate(-50%,var(--oy)) rotate(var(--a)) translateY(var(--ty));transform-origin:50% 140%;z-index:var(--i);cursor:pointer;transition:transform .55s var(--spring),filter .35s ease,box-shadow .35s ease;animation:vc-fan-in .9s var(--spring) backwards,vc-fan-float 6s ease-in-out infinite;animation-delay:calc(var(--i)*90ms),calc(1s + var(--i)*-1.2s)}
+.vc-fan-card{--w:190px;--oy:-46%;--ty:-120px;position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:5/7;border-radius:16px;overflow:hidden;box-shadow:0 0 0 2px var(--rc),0 24px 50px #000c;--a:calc((var(--i) - 2)*13deg);transform:translate(-50%,var(--oy)) rotate(var(--a)) translateY(var(--ty));transform-origin:50% 140%;z-index:var(--i);cursor:pointer;--ease:cubic-bezier(.22,1,.36,1);transition:transform .8s var(--ease),filter .7s var(--ease),box-shadow .7s var(--ease),z-index 0s linear .5s;animation:vc-fan-in .9s var(--spring) backwards,vc-fan-float 6s ease-in-out infinite;animation-delay:calc(var(--i)*90ms),calc(1s + var(--i)*-1.2s)}
 .vc-fan-card img{width:100%;height:100%;object-fit:cover;object-position:center 14%}
 .vc-fan-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#161312e6),linear-gradient(135deg,#ffffff22,transparent 35%)}
 .vc-fan-card .vc-sig{--w:190px}
@@ -100,14 +100,14 @@ button.vc-card:focus-visible{outline:2px solid var(--vc-gold);outline-offset:4px
 @keyframes vc-fan-in{from{transform:translate(-50%,-30%) rotate(0) translateY(0);opacity:0}}
 @keyframes vc-fan-float{0%,100%{translate:0 0}50%{translate:0 -10px}}
 /* fan hover: the hovered card rises, straightens and grows; neighbours part and dim */
-.vc-fan-card img{transition:transform .7s var(--spring),filter .35s ease}
+.vc-fan-card img{transition:transform 1s var(--ease)}
 .vc-fan-card::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 35%,#ffffff40 48%,#ffffff12 54%,transparent 64%);transform:translateX(-120%);opacity:0}
-.vc-fan-card .vc-sig,.vc-fan-card .vc-cn{transition:transform .5s var(--spring)}
+.vc-fan-card .vc-sig,.vc-fan-card .vc-cn{transition:transform .8s var(--ease)}
 @media(hover:hover){
- .vc-fan:has(.vc-fan-card:hover) .vc-fan-card:not(:hover){filter:brightness(.55) saturate(.7)}
- .vc-fan .vc-fan-card:hover{z-index:20;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.3)) translateY(calc(var(--ty) - 38px)) scale(1.16);box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
- .vc-fan .vc-fan-card:hover img{transform:scale(1.07)}
- .vc-fan .vc-fan-card:hover::before{animation:vc-fan-shine .9s ease-out .05s both}
+ .vc-fan:has(.vc-fan-card:hover) .vc-fan-card:not(:hover){filter:brightness(.6) saturate(.75)}
+ .vc-fan .vc-fan-card:hover{z-index:20;transition-delay:0s;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.3)) translateY(calc(var(--ty) - 30px)) scale(1.12);box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
+ .vc-fan .vc-fan-card:hover img{transform:scale(1.05)}
+ .vc-fan .vc-fan-card:hover::before{animation:vc-fan-shine 1.4s var(--ease) .15s both}
  .vc-fan .vc-fan-card:hover .vc-sig{transform:scale(1.12)}
  .vc-fan .vc-fan-card:hover .vc-cn{transform:translateY(-4px)}
  .vc-fan-card:hover ~ .vc-fan-card{transform:translate(-50%,var(--oy)) rotate(calc(var(--a) + 6deg)) translateY(var(--ty)) translateX(8px)}
