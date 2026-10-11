@@ -92,28 +92,34 @@ button.vc-card:focus-visible{outline:2px solid var(--vc-gold);outline-offset:4px
 .vc-hero{position:relative;height:540px;display:grid;place-items:center}
 .vc-hero-glow{position:absolute;inset:12% 10%;background:radial-gradient(ellipse,#9b878455,transparent 65%);filter:blur(20px);z-index:-1}
 .vc-fan{position:relative;width:100%;height:100%}
-.vc-fan-card{--w:190px;--oy:-46%;--ty:-120px;position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:5/7;border-radius:16px;overflow:hidden;box-shadow:0 0 0 2px var(--rc),0 24px 50px #000c;--a:calc((var(--i) - 2)*13deg);transform:translate(-50%,var(--oy)) rotate(var(--a)) translateY(var(--ty));transform-origin:50% 140%;z-index:var(--i);cursor:pointer;--ease:cubic-bezier(.22,1,.36,1);transition:transform .8s var(--ease),filter .7s var(--ease),box-shadow .7s var(--ease),z-index 0s linear .5s;animation:vc-fan-in .9s var(--spring) backwards,vc-fan-float 6s ease-in-out infinite;animation-delay:calc(var(--i)*90ms),calc(1s + var(--i)*-1.2s)}
-.vc-fan-card img{width:100%;height:100%;object-fit:cover;object-position:center 14%}
-.vc-fan-card::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#161312e6),linear-gradient(135deg,#ffffff22,transparent 35%)}
+.vc-fan-card{--w:190px;--oy:-46%;--ty:-120px;--r:16px;--ease:cubic-bezier(.22,1,.36,1);position:absolute;left:50%;top:50%;width:var(--w);aspect-ratio:5/7;perspective:1000px;--a:calc((var(--i) - 2)*13deg);transform:translate(-50%,var(--oy)) rotate(var(--a)) translateY(var(--ty));transform-origin:50% 140%;z-index:var(--i);cursor:pointer;transition:transform .8s var(--ease),filter .7s var(--ease),z-index 0s linear .7s;animation:vc-fan-in .9s var(--spring) backwards,vc-fan-float 6s ease-in-out infinite;animation-delay:calc(var(--i)*90ms),calc(1s + var(--i)*-1.2s)}
+.vc-fc-in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s var(--ease)}
+.vc-fc-face{position:absolute;inset:0;border-radius:var(--r);overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden;box-shadow:0 0 0 2px var(--rc),0 24px 50px #000c;transition:box-shadow .7s var(--ease)}
+.vc-fc-front img{width:100%;height:100%;object-fit:cover;object-position:center 14%}
+.vc-fc-front::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#161312e6),linear-gradient(135deg,#ffffff22,transparent 35%)}
 .vc-fan-card .vc-sig{--w:190px}
 .vc-fan-card .vc-cn{--w:190px}
+/* back of the card: what the role does */
+.vc-fc-back{transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;gap:calc(var(--w)*.035);padding:calc(var(--w)*.09) calc(var(--w)*.08);text-align:center;color:#efe6dc;background:radial-gradient(120% 60% at 50% 0,color-mix(in srgb,var(--rc) 50%,transparent),transparent 70%),linear-gradient(180deg,#231d1c,#141110)}
+.vc-fc-back::before{content:'';position:absolute;inset:calc(var(--w)*.035);border:1px solid color-mix(in srgb,var(--rc) 45%,transparent);border-radius:calc(var(--r) - 5px);pointer-events:none}
+.vc-fb-ico{display:grid;place-items:center;width:calc(var(--w)*.2);height:calc(var(--w)*.2);border-radius:50%;background:var(--rc);color:#fff;font-size:calc(var(--w)*.11);box-shadow:0 4px 14px #0008}
+.vc-fb-name{font:calc(var(--w)*.12)/1 Court,Georgia,serif;letter-spacing:.3px}
+.vc-fb-row{width:100%;display:grid;gap:2px;padding-top:calc(var(--w)*.035);border-top:1px solid #ffffff1c}
+.vc-fb-row b{font-size:calc(var(--w)*.046);font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:color-mix(in srgb,var(--rc) 55%,#fff)}
+.vc-fb-row span{font-size:calc(var(--w)*.064);line-height:1.3}
+.vc-fb-row em{font-style:normal;font-weight:700}
+.vc-fb-note{margin-top:auto;font-size:calc(var(--w)*.05);line-height:1.3;color:#efe6dc99;font-style:italic}
 @keyframes vc-fan-in{from{transform:translate(-50%,-30%) rotate(0) translateY(0);opacity:0}}
 @keyframes vc-fan-float{0%,100%{translate:0 0}50%{translate:0 -10px}}
-/* fan hover: the hovered card rises, straightens and grows; neighbours part and dim */
-.vc-fan-card img{transition:transform 1s var(--ease)}
-.vc-fan-card::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 35%,#ffffff40 48%,#ffffff12 54%,transparent 64%);transform:translateX(-120%);opacity:0}
-.vc-fan-card .vc-sig,.vc-fan-card .vc-cn{transition:transform .8s var(--ease)}
+/* fan hover: the hovered card lifts a little and flips to show its powers; neighbours part and dim */
 @media(hover:hover){
  .vc-fan:has(.vc-fan-card:hover) .vc-fan-card:not(:hover){filter:brightness(.6) saturate(.75)}
- .vc-fan .vc-fan-card:hover{z-index:20;transition-delay:0s;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.85)) translateY(calc(var(--ty) - 14px)) scale(1.05);box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
- .vc-fan .vc-fan-card:hover img{transform:scale(1.05)}
- .vc-fan .vc-fan-card:hover::before{animation:vc-fan-shine 1.4s var(--ease) .15s both}
- .vc-fan .vc-fan-card:hover .vc-sig{transform:scale(1.12)}
- .vc-fan .vc-fan-card:hover .vc-cn{transform:translateY(-4px)}
+ .vc-fan .vc-fan-card:hover{z-index:20;transition-delay:0s;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.85)) translateY(calc(var(--ty) - 14px)) scale(1.05)}
+ .vc-fan .vc-fan-card:hover .vc-fc-in{transform:rotateY(180deg)}
+ .vc-fan .vc-fan-card:hover .vc-fc-face{box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
  .vc-fan-card:hover ~ .vc-fan-card{transform:translate(-50%,var(--oy)) rotate(calc(var(--a) + 6deg)) translateY(var(--ty)) translateX(8px)}
  .vc-fan-card:has(~ .vc-fan-card:hover){transform:translate(-50%,var(--oy)) rotate(calc(var(--a) - 6deg)) translateY(var(--ty)) translateX(-8px)}
 }
-@keyframes vc-fan-shine{0%{transform:translateX(-120%);opacity:1}100%{transform:translateX(120%);opacity:0}}
 .vc-entry{max-width:470px}
 .vc-eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--vc-gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:600}
 .vc-entry h1{font-size:clamp(40px,5vw,62px);margin:14px 0 30px;background:linear-gradient(180deg,#f3f1ee,var(--vc-gold2) 60%,var(--vc-gold));-webkit-background-clip:text;background-clip:text;color:transparent;animation:vc-rise .8s var(--spring) both .15s}
@@ -456,7 +462,7 @@ dialog[open]{animation:vc-dialog .45s var(--spring)}
  body .brand{font-size:28px}
  .vc-welcome{grid-template-columns:1fr;gap:0;min-height:0}
  .vc-hero{height:270px;order:-1}
- .vc-fan-card{--w:112px;--oy:-40%;--ty:-60px;border-radius:11px}
+ .vc-fan-card{--w:112px;--oy:-40%;--ty:-60px;--r:11px}
  .vc-fan-card .vc-sig,.vc-fan-card .vc-cn{--w:112px}
  .vc-entry h1{font-size:36px;margin:10px 0 18px}
  .vc-form{padding:14px}
