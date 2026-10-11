@@ -76,7 +76,20 @@ function Le(force){
  Re.querySelector("form")?.addEventListener("submit",async n=>{n.preventDefault();const to=vt,ta=Re.querySelector("textarea"),text=ta?ta.value:dmDraft[to]||"";if(!text.trim()||dmSending)return;dmDraft[to]="";if(ta)ta.value="";if(!await dmSend(to,text)&&!dmDraft[to])dmDraft[to]=text;Le(!0);Re.querySelector("textarea")?.focus()});
  const t=Re.querySelector(".dm-thread");t&&(t.scrollTop=t.scrollHeight)}
 function dmAdd(list){let added=!1;for(const m of list||[]){if(!m||bt.some(x=>x.id===m.id))continue;bt.push(m);dmSince=Math.max(dmSince,m.id);added=!0}if(added){bt.sort((a,b)=>a.id-b.id);bt=bt.slice(-300)}return added}
-async function dmPoll(){if(dmBusy||!ee?.seat||!ee?.state||dmMe()?.removed||document.hidden)return;dmBusy=!0;const key=su;try{const r=await fetch("/api/dm?code="+encodeURIComponent(ee.seat.code)+"&since="+dmSince,{headers:{Authorization:"Bearer "+ee.seat.token}}),d=await r.json();if(key!==su)return;if(!r.ok)throw Error(d.error);const before=bt.filter(m=>m.from!==ee.seat.id).length;const added=dmAdd(d.messages);const incoming=bt.filter(m=>m.from!==ee.seat.id).length-before;if(Lt.startsWith("Messages unavailable"))Lt="";if(added&&dmLoaded&&incoming>0&&!($t&&vt&&d.messages.some(m=>m.from===vt)))dmChime();dmLoaded=!0;Le()}catch(i){if(key===su){Lt="Messages unavailable. "+(i.message||"");Le()}}finally{dmBusy=!1}}
+async function dmPoll(){if(dmBusy||!ee?.seat||!ee?.state||dmMe()?.removed||document.hidden)return;dmBusy=!0;const key=su;try{const r=await fetch("/api/dm?code="+encodeURIComponent(ee.seat.code)+"&since="+dmSince,{headers:{Authorization:"Bearer "+ee.seat.token}}),d=await r.json();if(key!==su)return;if(!r.ok)throw Error(d.error);const fresh=(d.messages||[]).filter(m=>m&&m.from!==ee.seat.id&&!bt.some(x=>x.id===m.id));dmAdd(d.messages);if(Lt.startsWith("Messages unavailable"))Lt="";const show=fresh.filter(m=>!($t&&vt===m.from));if(dmLoaded&&show.length){dmChime();dmToast(show.at(-1),show.length)}dmLoaded=!0;Le()}catch(i){if(key===su){Lt="Messages unavailable. "+(i.message||"");Le()}}finally{dmBusy=!1}}
+// Pop-up for a new private message: who, a preview, Reply. Replaces any earlier pop-up.
+var dmToastEl=null,dmToastTimer=null;
+function dmToast(m,count){const p=ee?.state?.players.find(x=>x.id===m.from);if(!p)return;
+ if(!dmToastEl){dmToastEl=document.createElement("div");dmToastEl.className="dm-toast";dmToastEl.setAttribute("role","status");dmToastEl.setAttribute("aria-live","polite");document.body.append(dmToastEl)}
+ const more=count>1?` <small>+${count-1} more</small>`:"";
+ dmToastEl.innerHTML=`<span class="dm-toast-ava">${ai((p.name||"?").trim()[0]?.toUpperCase()||"?")}</span><div class="dm-toast-body"><b>${ai(p.name)}${more}</b><span>${ai(m.text.length>90?m.text.slice(0,90)+"\u2026":m.text)}</span></div><button class="dm-toast-reply">Reply</button><button class="dm-toast-x" aria-label="Dismiss">\xD7</button>`;
+ const hide=()=>{dmToastEl.classList.remove("is-on");clearTimeout(dmToastTimer)};
+ dmToastEl.querySelector(".dm-toast-reply").onclick=()=>{hide();window.CoupChat.openThread(p.id)};
+ dmToastEl.querySelector(".dm-toast-body").onclick=()=>{hide();window.CoupChat.openThread(p.id)};
+ dmToastEl.querySelector(".dm-toast-x").onclick=hide;
+ dmToastEl.classList.remove("is-on");void dmToastEl.offsetWidth;dmToastEl.classList.add("is-on");
+ clearTimeout(dmToastTimer);dmToastTimer=setTimeout(hide,7000);
+ dmToastEl.onmouseenter=()=>clearTimeout(dmToastTimer);dmToastEl.onmouseleave=()=>{dmToastTimer=setTimeout(hide,2500)}}
 function dmChime(){try{const c=new(window.AudioContext||window.webkitAudioContext),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.08,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.25);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.3);setTimeout(()=>c.close(),500)}catch{}}
 // LiveKit room for voice only; failures are silent here (voice.js reports its own status).
 var msP=null,voiceErr="";

@@ -1,1 +1,52 @@
-{"rewrites":[{"source":"/api/auth","destination":"/api/api/auth"},{"source":"/api/game","destination":"/api/api/game"},{"source":"/api/voice","destination":"/api/api/voice"},{"source":"/api/dm","destination":"/api/api/dm"},{"source":"/room/:code","destination":"/index.html"}],"headers":[{"source":"/(.*)","headers":[{"key":"X-Content-Type-Options","value":"nosniff"},{"key":"Referrer-Policy","value":"same-origin"},{"key":"Content-Security-Policy","value":"default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src 'self' https://*.livekit.cloud wss://*.livekit.cloud; frame-ancestors 'none'"}]}],"outputDirectory":"public/public"}
+{
+ "rewrites": [
+  {
+   "source": "/api/auth",
+   "destination": "/api/api/auth"
+  },
+  {
+   "source": "/api/game",
+   "destination": "/api/api/game"
+  },
+  {
+   "source": "/api/voice",
+   "destination": "/api/api/voice"
+  },
+  {
+   "source": "/api/dm",
+   "destination": "/api/api/dm"
+  },
+  {
+   "source": "/api/waitlist",
+   "destination": "/api/api/waitlist"
+  },
+  {
+   "source": "/privacy",
+   "destination": "/privacy.html"
+  },
+  {
+   "source": "/room/:code",
+   "destination": "/index.html"
+  }
+ ],
+ "headers": [
+  {
+   "source": "/(.*)",
+   "headers": [
+    {
+     "key": "X-Content-Type-Options",
+     "value": "nosniff"
+    },
+    {
+     "key": "Referrer-Policy",
+     "value": "strict-origin-when-cross-origin"
+    },
+    {
+     "key": "Content-Security-Policy",
+     "value": "default-src 'self'; img-src 'self' data: https://*.googleusercontent.com; style-src 'self' 'unsafe-inline' https://accounts.google.com/gsi/style; font-src 'self' data:; script-src 'self' https://accounts.google.com/gsi/client; frame-src https://accounts.google.com/gsi/; connect-src 'self' https://accounts.google.com/gsi/ https://*.livekit.cloud wss://*.livekit.cloud; media-src 'self' blob:; frame-ancestors 'none'"
+    }
+   ]
+  }
+ ],
+ "outputDirectory": "public/public"
+}
