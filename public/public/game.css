@@ -105,7 +105,7 @@ button.vc-card:focus-visible{outline:2px solid var(--vc-gold);outline-offset:4px
 .vc-fan-card .vc-sig,.vc-fan-card .vc-cn{transition:transform .8s var(--ease)}
 @media(hover:hover){
  .vc-fan:has(.vc-fan-card:hover) .vc-fan-card:not(:hover){filter:brightness(.6) saturate(.75)}
- .vc-fan .vc-fan-card:hover{z-index:20;transition-delay:0s;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.3)) translateY(calc(var(--ty) - 30px)) scale(1.12);box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
+ .vc-fan .vc-fan-card:hover{z-index:20;transition-delay:0s;filter:none;animation-play-state:paused;transform:translate(-50%,var(--oy)) rotate(calc(var(--a)*.85)) translateY(calc(var(--ty) - 14px)) scale(1.05);box-shadow:0 0 0 2px var(--rc),0 0 34px color-mix(in srgb,var(--rc) 55%,transparent),0 40px 70px #000e}
  .vc-fan .vc-fan-card:hover img{transform:scale(1.05)}
  .vc-fan .vc-fan-card:hover::before{animation:vc-fan-shine 1.4s var(--ease) .15s both}
  .vc-fan .vc-fan-card:hover .vc-sig{transform:scale(1.12)}
