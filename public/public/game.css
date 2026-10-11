@@ -631,3 +631,7 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 /* Google button: match its light document so Chrome does not paint a white backdrop */
 .vc-gbtn,.vc-gbtn iframe{color-scheme:light}
 .vc-gbtn iframe{border-radius:999px}
+
+.vc-signin-row{display:grid;gap:10px;justify-items:center;margin-top:4px}
+.vc-signin-row .vc-or{width:100%;font-size:11px;color:var(--vc-mute)}
+.vc-signin-row .vc-gbtn{width:100%}
