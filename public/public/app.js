@@ -129,7 +129,7 @@ function seatClasses(p){const ph=state.phase,a=state.action,cls=[];
 function seatPos(i,n){const ang=(n===1?270:180+180*(i+.5)/n)*Math.PI/180;return {x:(50+45*Math.cos(ang)).toFixed(2),y:(56+44*Math.sin(ang)).toFixed(2)};}
 function seatHTML(p,i,n){const pos=seatPos(i,n),f=fxOf('seat:'+p.id+':spot','seat:'+p.id+':hit','seat:'+p.id+':elim','seat:'+p.id+':target','seat:'+p.id+':aura'),pf=fxOf('purse:'+p.id),df=fxOf('dealt:'+p.id);
  return `<div class="vc-seat ${seatClasses(p)}${f.cls}" data-seat="${p.id}" data-voice-seat="${p.id}" style="--x:${pos.x};--y:${pos.y};--k:${i};${f.style}">
- <div class="vc-seat-id">${ava(p)}${nameEl(p)}${p.ranked?'<span class="vc-ranked" title="Ranked · points count">★</span>':''}${statusBadge(p)}</div>
+ ${seatTag(p)}<div class="vc-seat-id">${ava(p)}${nameEl(p)}${p.ranked?'<span class="vc-ranked" title="Ranked · points count">★</span>':''}${statusBadge(p)}</div>
  <div class="vc-zones">
   <div class="vc-zone vc-cards${df.cls}" style="${df.style}" title="${p.cards.filter(c=>!c.revealed).length} influence">${p.cards.map((c,j)=>card(c,{size:'s',i:j})).join('')}</div>
   <div class="vc-zone vc-purse${pf.cls}" style="${pf.style}" title="${p.coins} coins">${chips(p.coins)}<b>${p.coins}</b></div>
@@ -142,18 +142,18 @@ function seatHTML(p,i,n){const pos=seatPos(i,n),f=fxOf('seat:'+p.id+':spot','sea
 function who(text){return [...(state?.players||[])].sort((a,b)=>b.name.length-a.name.length).find(p=>text.startsWith(p.name+' ')||text.startsWith(p.name+"'"));}
 function whoIn(text,players,before){return [...players].sort((a,b)=>b.name.length-a.name.length).find(p=>text.includes(before+p.name));}
 function chip(text,priv=false){let m,p=who(text),inner;
- if(m=text.match(/ chose (\w+)/)){const t=whoIn(text,state.players,' against ');inner=`${ava(p,'xs')}<span class="vc-ci">${ico(ACTS[m[1]]?.i||'play')}</span>${t?ico('arrow','vc-ar')+ava(t,'xs'):''}`;}
- else if(m=text.match(/ challenges (\w+)\./))inner=`${ava(p,'xs')}<span class="vc-ci is-bad">${ico('swords')}</span>${roleSig(m[1])}`;
- else if(m=text.match(/ proved (\w+),/))inner=`${ava(p,'xs')}${roleSig(m[1])}<span class="vc-ci is-ok">${ico('check')}</span>`;
- else if(m=text.match(/ concedes the (\w+) /))inner=`${ava(p,'xs')}${roleSig(m[1],'is-struck')}<span class="vc-ci is-bad">${ico('x')}</span>`;
- else if(m=text.match(/ blocks, claiming (\w+)\./))inner=`${ava(p,'xs')}<span class="vc-ci">${ico('shield')}</span>${roleSig(m[1])}`;
- else if(m=text.match(/ lost (\w+)\./))inner=`${ava(p,'xs')}<span class="vc-ci is-bad">${ico('skull')}</span>${roleSig(m[1],'is-struck')}`;
- else if(m=text.match(/ stole (\d+) coin/)){const t=whoIn(text,state.players,' from ');inner=`${ava(p,'xs')}<span class="vc-ci is-gold">+${m[1]}${ico('coin')}</span>${t?ava(t,'xs'):''}`;}
- else if(/ exchanged with the court/.test(text))inner=`${ava(p,'xs')}<span class="vc-ci">${ico('swap')}</span>`;
+ if(m=text.match(/ chose (\w+)/)){const t=whoIn(text,state.players,' against ');inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci">${ico(ACTS[m[1]]?.i||'play')}</span>${t?ico('arrow','vc-ar')+ava(t,'xs')+`<b class="vc-chipname">${nmx(t.id)}</b>`:''}`;}
+ else if(m=text.match(/ challenges (\w+)\./))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci is-bad">${ico('swords')}</span>${roleSig(m[1])}`;
+ else if(m=text.match(/ proved (\w+),/))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b>${roleSig(m[1])}<span class="vc-ci is-ok">${ico('check')}</span>`;
+ else if(m=text.match(/ concedes the (\w+) /))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b>${roleSig(m[1],'is-struck')}<span class="vc-ci is-bad">${ico('x')}</span>`;
+ else if(m=text.match(/ blocks, claiming (\w+)\./))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci">${ico('shield')}</span>${roleSig(m[1])}`;
+ else if(m=text.match(/ lost (\w+)\./))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci is-bad">${ico('skull')}</span>${roleSig(m[1],'is-struck')}`;
+ else if(m=text.match(/ stole (\d+) coin/)){const t=whoIn(text,state.players,' from ');inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci is-gold">+${m[1]}${ico('coin')}</span>${t?ava(t,'xs')+`<b class="vc-chipname">${nmx(t.id)}</b>`:''}`;}
+ else if(/ exchanged with the court/.test(text))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci">${ico('swap')}</span>`;
  else if(/^The action was blocked/.test(text))inner=`<span class="vc-ci">${ico('shield')}</span><span class="vc-ci is-bad">${ico('x')}</span>`;
- else if(/ wins\.$/.test(text))inner=`<span class="vc-ci is-gold">${ico('crown')}</span>${ava(p,'xs')}`;
+ else if(/ wins\.$/.test(text))inner=`<span class="vc-ci is-gold">${ico('crown')}</span>${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b>`;
  else if(m=text.match(/^Round (\d+) started/))inner=`<span class="vc-ci is-gold">${ico('play')}</span><b>${m[1]}</b>`;
- else if(/removed by the host/.test(text))inner=`${ava(p,'xs')}<span class="vc-ci is-bad">${ico('x')}</span>`;
+ else if(/removed by the host/.test(text))inner=`${ava(p,'xs')}<b class="vc-chipname">${nmx(p?.id)}</b><span class="vc-ci is-bad">${ico('x')}</span>`;
  else if(/Interrupted action cancelled/.test(text))inner=`<span class="vc-ci">${ico('x')}</span><span class="vc-ci is-gold">${ico('coin')}</span>`;
  else if(/timed out/.test(text))inner=`${p?ava(p,'xs'):''}<span class="vc-ci is-wait">${ico('hourglass')}</span>`;
  else if(/^Turn resolved/.test(text))return '';
@@ -163,6 +163,33 @@ function threadChips(t,max=99){const ev=[...t.events.map(e=>chip(e)),...(state.p
 function marks(t){const m={a:{},b:null};let cur=m.a;for(const e of t.events){let r;if(r=e.match(/ blocks, claiming (\w+)\./)){m.b={role:r[1],by:who(e)?.id};cur=m.b;}else if(/ challenges \w+\./.test(e))cur.ch=true;else if(/ proved \w+,/.test(e))cur.ok=true;else if(/ concedes the /.test(e))cur.bluff=true;else if(/^The action was blocked/.test(e))m.blocked=true;}return m;}
 function stamp(s){return s.bluff?`<span class="vc-stamp is-bad" title="Bluff">${ico('x')}</span>`:s.ok?`<span class="vc-stamp is-ok" title="Proved">${ico('check')}</span>`:s.ch?`<span class="vc-stamp is-bad is-live" title="Challenged">${ico('swords')}</span>`:'';}
 
+/* ── Who is doing what to whom, in words ── */
+const nmx=id=>id===seat?.id?'You':pname(id);
+const poss=id=>id===seat?.id?'Your':pname(id)+"'s";
+const whoTag=(id,cls='')=>{const p=byId(id);return p?`<span class="vc-who ${cls} ${id===seat?.id?'is-me':''}">${ava(p,'xs')}<b>${nmx(id)}</b></span>`:'';};
+const VERB={income:['takes Income','+1'],aid:['takes Foreign aid','+2'],tax:['takes Tax','+3'],exchange:['swaps cards with the deck',''],steal:['steals up to 2 from',''],assassinate:['assassinates',''],coup:['launches a Coup on','']};
+function actionLine(t,blk){const k=t.kind,a=ACTS[k],v=VERB[k]||[k,''];
+ return `<div class="vc-actline">${whoTag(t.actor)}${a?.role?`<span class="vc-as">as ${roleSig(a.role)}<b>${a.role}</b></span>`:''}<span class="vc-verb">${ico(a?.i||'play')}${v[0]}</span>${t.target?whoTag(t.target,'is-target'):''}${v[1]?`<span class="vc-gain">${ico('coin')}${v[1]}</span>`:''}</div>${blk?`<div class="vc-actline is-block">${whoTag(blk.by)}<span class="vc-verb">${ico('shield')}blocks as</span><span class="vc-as">${roleSig(blk.role)}<b>${blk.role}</b></span></div>`:''}`;}
+function phaseLine(){const ph=state.phase,a=state.action;if(state.status!=='playing'||!ph)return '';
+ const pend=ph.eligible?ph.eligible.filter(id=>!ph.passed.includes(id)):[],waiting=pend.length?` <small>waiting on ${pend.map(id=>'<b>'+nmx(id)+'</b>').join(', ')}</small>`:'';
+ let icon='crown',txt='';const role=a?ACTS[a.kind]?.role:null;
+ if(ph.type==='turn'){const c=state.players[state.turn]?.id;txt=c===seat.id?'<b>Your turn</b>: pick an action':`<b>${pname(c)}</b>'s turn`;}
+ else if(ph.type==='challenge'){icon='swords';txt=`Challenge <b>${poss(a.actor)}</b> ${role} claim?${waiting}`;}
+ else if(ph.type==='block'){icon='shield';txt=(a.kind==='aid'?`Anyone can block <b>${poss(a.actor)}</b> Foreign aid with Duke`:`<b>${nmx(a.target)}</b> can block ${a.target===seat.id?'this':'it'}`)+waiting;}
+ else if(ph.type==='blockChallenge'){icon='swords';txt=`Challenge <b>${poss(a.blocker)}</b> ${a.blockRole} block?${waiting}`;}
+ else if(ph.type==='prove'){icon='swords';txt=`<b>${nmx(ph.player)}</b> must show ${ph.role} <small>challenged by <b>${nmx(ph.challenger)}</b></small>`;}
+ else if(ph.type==='lose'){icon='skull';txt=`<b>${nmx(ph.player)}</b> ${ph.player===seat.id?'lose':'loses'} a card <small>${esc(lossCauseText(ph))}</small>`;}
+ else if(ph.type==='exchange'){icon='swap';txt=`<b>${nmx(ph.player)}</b> ${ph.player===seat.id?'are':'is'} choosing cards`;}
+ return `<div class="vc-phaseline ph-${ph.type}">${ico(icon)}<span>${txt}</span></div>`;}
+function seatTag(p){const ph=state.phase,a=state.action;if(state.status!=='playing'||!ph||!living(p))return '';
+ let t=null;
+ if(ph.type==='prove'&&ph.player===p.id)t=['is-bad','swords','Challenged'];
+ else if(ph.type==='lose'&&ph.player===p.id)t=['is-bad','skull','Losing a card'];
+ else if(ph.type==='prove'&&ph.challenger===p.id)t=['is-bad','swords','Challenging'];
+ else if(a?.blocker===p.id)t=['is-block','shield','Blocking'];
+ else if(a?.target===p.id)t=['is-target','target','Target'];
+ else if(state.players[state.turn]?.id===p.id)t=['is-turn','crown',a&&ph.type!=='turn'?'Playing':'Turn'];
+ return t?`<span class="vc-seat-tag ${t[0]}">${ico(t[1])}${t[2]}</span>`:'';}
 function playHTML(){const t=state.currentThread;
  if(state.status==='finished'&&state.winner){const w=byId(state.winner),f=fxOf('win');return `<div class="vc-winner${f.cls}" style="${f.style}">${ico('crown','vc-crown')}${ava(w,'xl')}<b>${esc(w?.name)}</b></div>`;}
  if(!t)return `<div class="vc-slot-empty">${ico('crown')}</div>`;
@@ -171,7 +198,7 @@ function playHTML(){const t=state.currentThread;
  return `<div class="vc-played ${t.complete?'is-done':''} ${mk.blocked?'is-blocked':''}" title="${esc(byId(t.actor)?.name)} · ${ACTS[k]?.label||k}${role?' (claims '+role+')':''}">
   <div class="vc-play-main${f.cls}" style="${f.style}">${main}${role?`<span class="vc-claimq" title="Claim">?</span>`:''}${stamp(mk.a)}</div>
   ${blk?`<div class="vc-play-block${bf.cls}" style="${bf.style}">${card({id:'blk-'+t.id,role:blk.role,revealed:false},{size:'m',extra:'is-claim'})}<span class="vc-shield">${ico('shield')}</span>${stamp(mk.b||{})}</div>`:''}
-  ${t.target||blk?`<div class="vc-play-who">${ava(byId(t.actor),'xs')}${t.target?ico('arrow','vc-ar')+ava(byId(t.target),'xs'):''}${blk?`<span class="vc-ci">${ico('shield')}</span>${ava(byId(blk.by),'xs')}`:''}</div>`:''}
+  <div class="vc-play-who">${actionLine(t,blk)}${t.complete?`<span class="vc-done">${mk.blocked?ico('shield')+'Blocked':ico('check')+'Done'}</span>`:''}</div>
  </div>`;}
 
 /* ── dock (decision area). One-word labels, icons, avatars. ── */
@@ -189,14 +216,14 @@ function dockHTML(){const ph=state.phase,m=me();
  if(state.status==='finished'){const w=byId(state.winner),won=state.winner===seat.id;return head('crown',won?'Victory':esc(w?.name||''),won?'is-gold':'')+resultHTML()+`<div class="vc-row">${seat.id===state.host?`<button class="vc-btn gold" data-move="start" ${state.players.filter(p=>!p.removed).length<2?'disabled':''}>${ico('play')}Rematch</button>`:`<span class="vc-count" title="Waiting for the host">${ico('hourglass')}${ico('crown')}</span>`}<a class="vc-btn ghost" href="/" title="Create or join another table">${ico('home')}New</a></div>`;}
  if(!living(m))return head('skull','Out','is-bad')+`<div class="vc-row"><span class="vc-count" title="Watching">${ico('eye')}</span><a class="vc-btn ghost" href="/" title="Create or join another table">${ico('home')}New</a></div>`;
  if(targetAction){const a=ACTS[targetAction];return head('target',a.label,'is-gold')+`<div class="vc-targets">${state.players.filter(p=>p.id!==seat.id&&!p.spectator&&living(p)).map(p=>`<button class="vc-tgt" data-target="${p.id}" title="${esc(p.name)} · ${p.coins} coins · ${p.cards.filter(c=>!c.revealed).length} influence">${ava(p,'sm')}<span>${esc(p.name)}</span><small>${ico('coin')}${p.coins}</small></button>`).join('')}<button class="vc-btn ghost" id="cancel-target" aria-label="Cancel">${ico('x')}</button></div>`;}
- if(ph.type==='turn'){const cur=state.players[state.turn];if(cur.id===seat.id)return head('crown',m.coins>=10?'Coup!':'Your move','is-gold')+`<div class="vc-acts">${Object.keys(ACTS).map(actTile).join('')}</div>`;return head('hourglass',esc(cur.name))+waitRow([cur.id]);}
+ if(ph.type==='turn'){const cur=state.players[state.turn];if(cur.id===seat.id)return head('crown',m.coins>=10?'Coup!':'Your move','is-gold')+`<div class="vc-acts">${Object.keys(ACTS).map(actTile).join('')}</div>`;return head('hourglass',esc(cur.name)+"'s turn")+waitRow([cur.id]);}
  if(['challenge','block','blockChallenge'].includes(ph.type)){const a=state.action,mine=ph.eligible.includes(seat.id)&&!ph.passed.includes(seat.id),blockPh=ph.type==='blockChallenge',role=blockPh?a.blockRole:ACTS[a.kind]?.role,claimer=blockPh?a.blocker:a.actor;
-  const what=ph.type==='block'?`<div class="vc-claim">${ava(byId(a.actor),'sm')}<span class="vc-ci">${ico(ACTS[a.kind].i)}</span><b>${ACTS[a.kind].label}</b>${a.target?ico('arrow','vc-ar')+ava(byId(a.target),'sm'):''}</div>`:`<div class="vc-claim">${ava(byId(claimer),'sm')}${blockPh?`<span class="vc-ci">${ico('shield')}</span>`:''}${roleSig(role)}<b>${role}?</b></div>`;
+  const what=`<div class="vc-claim vc-claim-wide">${actionLine({actor:a.actor,kind:a.kind,target:a.target},blockPh?{by:a.blocker,role:a.blockRole}:null)}</div>`;
   if(!mine)return head(ph.type==='block'?'shield':'swords',ph.type==='block'?'Block?':'Challenge?')+what+waitRow(ph.eligible.filter(id=>!ph.passed.includes(id)),ph.passed);
   return head(ph.type==='block'?'shield':'swords',ph.type==='block'?'Block?':'Challenge?','is-gold')+what+`<div class="vc-resp">${ph.type==='block'?BLOCKERS[a.kind].map(r=>`<button class="vc-btn block role-${r.toLowerCase()}" data-block="${r}" ${busy?'disabled':''} title="Block, claiming ${r}"><img src="${ART[r.toLowerCase()]}" alt="">${ico('shield')}${r}</button>`).join(''):`<button class="vc-btn danger" data-move="challenge" ${busy?'disabled':''} title="Challenge the ${role} claim">${ico('swords')}Challenge</button>`}<button class="vc-btn ok" data-move="pass" ${busy?'disabled':''} title="${ph.type==='block'?'Allow the action':'Accept the claim'}">${ico('check')}${ph.type==='block'?'Allow':'Accept'}</button></div>`;}
  if(ph.type==='prove'){if(ph.player===seat.id)return head('swords','Prove '+ph.role,'is-bad')+`<div class="vc-claim">${ava(byId(ph.challenger),'sm')}<span class="vc-ci is-bad">${ico('swords')}</span>${roleSig(ph.role)}</div><div class="vc-pick-row">${m.cards.filter(c=>!c.revealed&&c.role===ph.role).map((c,i)=>card(c,{size:'m',sel:true,i})).join('')}</div><div class="vc-resp"><button class="vc-btn danger" data-move="concede" ${busy?'disabled':''} title="Concede and lose a card">${ico('x')}Concede</button></div>`;
-  return head('swords','Challenge')+`<div class="vc-claim">${ava(byId(ph.challenger),'sm')}<span class="vc-ci is-bad">${ico('swords')}</span>${ava(byId(ph.player),'sm')}${roleSig(ph.role)}</div>`+waitRow([ph.player]);}
- if(ph.type==='lose'){const cause=`<div class="vc-claim" title="${esc(lossCauseText(ph))}">${ph.reason?.actor?ava(byId(ph.reason.actor),'sm'):''}<span class="vc-ci is-bad">${ico(lossIcon(ph))}</span>${ava(byId(ph.player),'sm')}</div>`;
+  return head('swords','Challenge')+`<div class="vc-claim vc-claim-wide"><div class="vc-actline">${whoTag(ph.challenger)}<span class="vc-verb is-bad">${ico('swords')}challenged</span>${whoTag(ph.player)}<span class="vc-as">${roleSig(ph.role)}<b>${ph.role}?</b></span></div></div>`+waitRow([ph.player]);}
+ if(ph.type==='lose'){const cause=`<div class="vc-claim vc-claim-wide"><div class="vc-actline">${ph.reason?.actor?whoTag(ph.reason.actor):''}<span class="vc-verb is-bad">${ico(lossIcon(ph))}${({assassinate:'assassinated',coup:'couped',failedChallenge:'won the challenge against',conceded:'caught'})[ph.reason?.kind]||'hit'}</span>${whoTag(ph.player,'is-target')}</div><small class="vc-cause">${esc(lossCauseText(ph))}</small></div>`;
   if(ph.player===seat.id)return head('skull','Reveal one','is-bad')+cause+`<div class="vc-pick-row">${m.cards.filter(c=>!c.revealed).map((c,i)=>card(c,{size:'m',sel:true,i})).join('')}</div>`;
   return head('skull','Influence lost')+cause+waitRow([ph.player]);}
  if(ph.type==='exchange'){if(ph.player===seat.id)return head('swap',`Keep ${ph.keep}`,'is-gold')+`<div class="vc-pick-row vc-exgrid">${ph.cards.map((c,i)=>card(c,{size:'m',sel:true,i})).join('')}</div><div class="vc-resp"><span class="vc-count">${selected.size}/${ph.keep}</span><button class="vc-btn gold" id="confirm-exchange" ${selected.size!==ph.keep||busy?'disabled':''}>${ico('check')}Keep</button></div>`;
@@ -271,13 +298,14 @@ function gameHTML(){const spectating=!!me().spectator,seated=seatedPlayers(),opp
   <div class="vc-felt"></div><div class="vc-dim${dim.cls}" style="${dim.style}"></div>
   <div class="vc-opps count-${opps.length}">${opps.map((p,i)=>seatHTML(p,i,opps.length)).join('')}</div>
   <div class="vc-center">
+   ${phaseLine()}
    <div class="vc-timer is-idle" id="vc-timer" title="Time left"><svg viewBox="0 0 44 44" aria-hidden="true"><circle class="t" cx="22" cy="22" r="19"/><circle class="b" cx="22" cy="22" r="19" pathLength="100"/></svg><span id="countdown" role="timer"></span></div>
    <div class="vc-table-row">
     <div class="vc-deck${deckF.cls}" id="vc-deck" style="${deckF.style}" title="Court deck · ${state.deckCount} cards"><div class="vc-card vc-s is-back"><div class="vc-flip"><div class="vc-back"><span>${ico('crown')}</span></div></div></div><div class="vc-card vc-s is-back"><div class="vc-flip"><div class="vc-back"><span>${ico('crown')}</span></div></div></div><div class="vc-card vc-s is-back"><div class="vc-flip"><div class="vc-back"><span>${ico('crown')}</span></div></div></div><b class="vc-badge">${state.deckCount}</b></div>
     <div class="vc-play" id="vc-play">${playHTML()}</div>
     <div class="vc-bank" id="vc-bank" title="Treasury"><span class="vc-pile"><i></i><i></i><i></i><i></i><i></i></span></div>
    </div>
-   <div class="vc-feed" aria-label="This turn">${t?threadChips(t,7):''}</div>
+   <div class="vc-feed" aria-label="This turn">${t?threadChips(t,5):''}</div>
   </div>
   <div class="vc-corner"><span id="connection" class="vc-conn" title="Connection">Connected</span><span class="vc-round" title="Round">${ico('crown')}${state.round}</span><button class="vc-iconbtn" id="vc-history" aria-expanded="${historyOpen}" title="Table history" aria-label="Table history">${ico('list')}</button></div>
   ${specs.length?`<div class="vc-specs" title="Spectators · next round queue">${ico('eye')}${specs.map(p=>`<span class="vc-spec">${ava(p,'xs')}${nameEl(p)}${dmBadge(p)}${removeBtn(p)}</span>`).join('')}</div>`:''}
@@ -285,7 +313,7 @@ function gameHTML(){const spectating=!!me().spectator,seated=seatedPlayers(),opp
  <div class="vc-hud">
   ${spectating?`<section class="vc-mine is-spec"><div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b><span class="vc-status is-wait" title="Spectating">${ico('eye')}</span></div></section>`:
   `<section class="vc-mine ${seatClasses(m)}${mineF.cls}" data-seat="${m.id}" data-voice-seat="${m.id}" style="${mineF.style}">
-   <div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b>${statusBadge(m)}<div class="own-seat"></div></div>
+   ${seatTag(m)}<div class="vc-mine-id">${ava(m,'lg')}<b>${esc(m.name)}</b>${statusBadge(m)}<div class="own-seat"></div></div>
    <div class="vc-zones big">
     <div class="vc-zone vc-cards${myDealt.cls}" style="${myDealt.style}">${m.cards.map((c,i)=>card(c,{size:'l',i})).join('')}</div>
     <div class="vc-zone vc-purse big${myPurse.cls}" style="${myPurse.style}" title="${m.coins} coins">${chips(m.coins)}<b>${m.coins}</b></div>
