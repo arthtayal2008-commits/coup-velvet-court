@@ -516,3 +516,16 @@ body{background:radial-gradient(1100px 620px at 50% -12%,#3a1518 0%,transparent 
 .vc-play-who,.vc-chip{background:#140e0bdd}
 .vc-timer circle{fill:#140e0bdd}
 @media(max-width:760px){.vc-center{background:radial-gradient(ellipse at 50% 35%,#ffffff10,transparent 55%),repeating-linear-gradient(97deg,#00000000 0 7px,#00000014 7px 9px,#ffffff06 9px 13px),repeating-linear-gradient(93deg,#6b4128 0 38px,#5a3420 38px 70px,#734a2f 70px 96px),#5c3721;box-shadow:inset 0 0 0 2px #2a170d,inset 0 0 0 8px #3c2416,inset 0 0 0 9px #c8a88855,0 20px 40px #000a}}
+/* private messages panel */
+.dm-form{display:flex;gap:8px;align-items:stretch;margin-top:10px}
+.dm-form textarea{flex:1;min-height:54px;max-height:140px;resize:vertical;background:#121010;border:1px solid var(--vc-line2);border-radius:12px;color:var(--vc-ink);padding:10px 12px;font:14px/1.4 Melange,system-ui,sans-serif}
+.dm-form textarea:focus-visible{outline:none;border-color:var(--vc-gold);box-shadow:0 0 0 3px #c8323a33}
+.dm-form button.primary{background:linear-gradient(180deg,#e0484f,#c8323a 55%,#9c2128);color:#fff;border-radius:12px;padding:0 16px;font-weight:600}
+.dm-form button.primary:disabled{opacity:.5}
+.dm-thread p{border-radius:12px;background:#2a2626}
+.dm-thread p.sent{background:#4a2326;margin-left:28px}
+.dm-thread p b small{font-weight:400;color:var(--vc-mute);margin-left:4px}
+.dm-thread p span{display:block;margin-top:3px}
+.dm-panel h3{font-family:Court,Georgia,serif;font-size:20px}
+.dm-panel>p[role=status]{color:var(--vc-red);font-size:12px}
+.dm-people small{max-width:60%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
